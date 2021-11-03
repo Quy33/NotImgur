@@ -8,8 +8,7 @@
 import UIKit
 
 class ViewController: UIViewController {
-//    @IBOutlet weak var collectionView: UICollectionView?
-    @IBOutlet weak var imageView: UIImageView?
+    @IBOutlet weak var collectionView: UICollectionView?
     var imgurManager = ImgurNetworkManager()
     var imgurItems = [ImgurGalleryItem]()
     var images = [UIImage]()
@@ -17,6 +16,10 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        collectionView?.dataSource = self
+        let layout = UICollectionViewFlowLayout()
+        collectionView?.delegate = self
+        collectionView?.collectionViewLayout = layout
         networking()
     }
     
@@ -27,10 +30,28 @@ class ViewController: UIViewController {
                 let imagesGot = try await imgurManager.downloadImage(model)
                 let galleryModel = imgurManager.getImgurModels(with: model)
                 self.images.append(contentsOf: imagesGot)
+                collectionView?.reloadData()
             } catch {
                 print(error)
             }
         }
+    }
+}
+//MARK: CollectionView Datasource
+extension ViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return images.count
+    }
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GalleryViewCell.identifier, for: indexPath) as! GalleryViewCell
+        cell.configure(image: images[indexPath.row])
+        return cell
+    }
+}
+//MARK: Flow Layout Delegate
+extension ViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: view.frame.width/2 - 10, height: 200)
     }
 }
 

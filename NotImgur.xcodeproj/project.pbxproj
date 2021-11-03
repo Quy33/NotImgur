@@ -16,6 +16,8 @@
 		5301112727312194004377B1 /* ImgurNetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5301112627312194004377B1 /* ImgurNetworkManager.swift */; };
 		5301112927312390004377B1 /* ImageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5301112827312390004377B1 /* ImageModel.swift */; };
 		5301112E27312BD1004377B1 /* ImgurGalleryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5301112D27312BD1004377B1 /* ImgurGalleryItem.swift */; };
+		53CE08462732912B00E12D1D /* GalleryViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53CE08452732912B00E12D1D /* GalleryViewCell.swift */; };
+		53CE08482732915100E12D1D /* PinterestLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53CE08472732915100E12D1D /* PinterestLayout.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +32,8 @@
 		5301112627312194004377B1 /* ImgurNetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImgurNetworkManager.swift; sourceTree = "<group>"; };
 		5301112827312390004377B1 /* ImageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageModel.swift; sourceTree = "<group>"; };
 		5301112D27312BD1004377B1 /* ImgurGalleryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImgurGalleryItem.swift; sourceTree = "<group>"; };
+		53CE08452732912B00E12D1D /* GalleryViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryViewCell.swift; sourceTree = "<group>"; };
+		53CE08472732915100E12D1D /* PinterestLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinterestLayout.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +100,8 @@
 			isa = PBXGroup;
 			children = (
 				5301111627312057004377B1 /* ViewController.swift */,
+				53CE08452732912B00E12D1D /* GalleryViewCell.swift */,
+				53CE08472732915100E12D1D /* PinterestLayout.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -175,6 +181,8 @@
 				5301112E27312BD1004377B1 /* ImgurGalleryItem.swift in Sources */,
 				5301112927312390004377B1 /* ImageModel.swift in Sources */,
 				5301112727312194004377B1 /* ImgurNetworkManager.swift in Sources */,
+				53CE08482732915100E12D1D /* PinterestLayout.swift in Sources */,
+				53CE08462732912B00E12D1D /* GalleryViewCell.swift in Sources */,
 				5301111327312057004377B1 /* AppDelegate.swift in Sources */,
 				5301111527312057004377B1 /* SceneDelegate.swift in Sources */,
 			);
