@@ -11,6 +11,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView?
     var imgurManager = ImgurNetworkManager()
     var imgurItems = [ImgurGalleryItem]()
+    let queryAmount = 60
     var images = [UIImage](repeating: UIImage(named: "placeholder")!, count: 60)
 
 
@@ -24,7 +25,6 @@ class ViewController: UIViewController {
         collectionView?.collectionViewLayout = layout
         Task {
             await initalNetworking()
-            updateLayout()
             print("Finished")
         }
     }
@@ -37,8 +37,23 @@ class ViewController: UIViewController {
             
 //            self.images = imagesGot
             let urls = try imgurManager.getAllLinks(model)
-            for url in urls {
-                try await imgurManager.singleDownload(with: url)
+            
+            var indexes = [IndexPath]()
+            for i in 0..<queryAmount {
+                indexes.append(IndexPath(item: i, section: 0))
+            }
+            
+            for index in indexes {
+                let image = try await imgurManager.singleDownload(with: urls[index.item])
+                images[index.item] = image
+                    
+                DispatchQueue.main.async {
+                    var temp = [IndexPath]()
+                    temp.append(index)
+
+                    self.collectionView?.reloadItems(at: temp)
+                    self.updateLayout()
+                }
             }
             print("Done")
         } catch {
@@ -70,7 +85,7 @@ class ViewController: UIViewController {
         guard let image = UIImage(named: "placeholder") else {
             return nil
         }
-        return [UIImage](repeating: image, count: 60)
+        return [UIImage](repeating: image, count: queryAmount)
     }
     func reload(collectionView: UICollectionView){
         let contentOffset = collectionView.contentOffset

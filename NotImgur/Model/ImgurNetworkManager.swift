@@ -92,7 +92,6 @@ struct ImgurNetworkManager {
             throw ImageDownloadError.badLink
         }
         var urls = [URL]()
-        var images = [UIImage]()
         //Check links
         for link in links {
             guard let url = URL(string: link) else {
@@ -103,7 +102,7 @@ struct ImgurNetworkManager {
         }
         return urls
     }
-    func singleDownload(with link: URL) async throws {
+    func singleDownload(with link: URL) async throws -> UIImage {
         let request = URLRequest(url: link)
         let (data,response) = try await URLSession.shared.data(for: request)
 //            print("\((response as? HTTPURLResponse)?.statusCode) : \(url)")
@@ -114,7 +113,7 @@ struct ImgurNetworkManager {
         guard let image = UIImage(data: data) else {
             throw ImageDownloadError.badImage
         }
-        print(image.size)
+        return image
     }
 
 //MARK: Getting the Gallery Item model to move to detail screen and then to be use for API Call
@@ -140,7 +139,7 @@ struct ImgurNetworkManager {
         guard let i = result.lastIndex(of: ".") else {
             throw ImageDownloadError.badLink
         }
-        result.insert("t", at: i)
+        result.insert("m", at: i)
         return result
     }
     
