@@ -38,17 +38,6 @@ struct ImgurNetworkManager {
         guard let model = parseGallery(data) else {
             throw ImageDownloadError.invalidData
         }
-//        for i in 0..<model.data.count {
-//            print("\(model.data[i].is_album):\(i)")
-//        }
-//        print(String(data: data, encoding: .utf8)!)
-//        for item in model.data {
-//            if item.is_album {
-//                print(item.images![0].type)
-//            } else {
-//                print(item.type!)
-//            }
-//        }
         return model
     }
 
@@ -116,15 +105,8 @@ struct ImgurNetworkManager {
         return image
     }
 
-//MARK: Getting the Gallery Item model to move to detail screen and then to be use for API Call
-    func getImgurModels(with model: ImageModel)->[ImgurGalleryItem]{
-        var stackOfModel = [ImgurGalleryItem]()
-        for item in model.data {
-            let newModel = ImgurGalleryItem(id: item.id, is_album: item.is_album)
-            stackOfModel.append(newModel)
-        }
-        return stackOfModel
-    }
+//MARK: Updating Gallery Item model to move to detail screen and then to be use for API Call
+
      
 //MARK: Misc Function
     private func getImgLink(with model: ImageModel) throws ->[String]{

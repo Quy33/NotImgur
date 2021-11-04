@@ -9,14 +9,17 @@ import Foundation
 import UIKit
 
 struct ImgurGalleryItem {
-    let id: String
-    let isAlbum: Bool
+    var id: String
+    var isAlbum: Bool
+    var image: UIImage
     init() {
         id = ""
         isAlbum = false
+        image = UIImage(named: "placeholder")!
     }
-    init(id: String, is_album: Bool) {
+    init(id: String, is_album: Bool, image: UIImage) {
         self.id = id
         isAlbum = is_album
+        self.image = image
     }
 }

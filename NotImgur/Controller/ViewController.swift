@@ -12,7 +12,7 @@ class ViewController: UIViewController {
     var imgurManager = ImgurNetworkManager()
     var imgurItems = [ImgurGalleryItem]()
     let queryAmount = 60
-    var images = [UIImage](repeating: UIImage(named: "placeholder")!, count: 60)
+    var galleryItems = [ImgurGalleryItem](repeating: ImgurGalleryItem(), count: 60)
 
 
     override func viewDidLoad() {
@@ -32,27 +32,18 @@ class ViewController: UIViewController {
     func initalNetworking() async {
         do {
             let model = try await imgurManager.requestGallery()
-            //let imagesGot = try await imgurManager.downloadImage(model)
-            //let galleryModel = imgurManager.getImgurModels(with: model)
             
 //            self.images = imagesGot
             let urls = try imgurManager.getAllLinks(model)
             
-            var indexes = [IndexPath]()
-            for i in 0..<queryAmount {
-                indexes.append(IndexPath(item: i, section: 0))
-            }
-            
-            for index in indexes {
-                let image = try await imgurManager.singleDownload(with: urls[index.item])
-                images[index.item] = image
-                    
+            for i in 0..<galleryItems.count {
+                let newImage = try await imgurManager.singleDownload(with: urls[i])
+                galleryItems[i].image = newImage
+                
+                let indexPath = IndexPath(item: i, section: 0)
                 DispatchQueue.main.async {
-                    var temp = [IndexPath]()
-                    temp.append(index)
-
-                    self.collectionView?.reloadItems(at: temp)
-                    self.updateLayout()
+                    self.collectionView?.reloadItems(at: [indexPath])
+                    self.reload(collectionView: self.collectionView!)
                 }
             }
             print("Done")
@@ -61,58 +52,51 @@ class ViewController: UIViewController {
         }
     }
     @IBAction func testAdd(_ sender: UIButton){
-        guard let newImgs = makePlaceHolders() else {
-            print("Can't find place holder image")
-            return
-        }
-        self.images.append(contentsOf: newImgs)
+        galleryItems.append(contentsOf: makePlaceHolders())
         reload(collectionView: collectionView!)
     }
-//    @IBAction func randomPressed(_ sender: Any) {
-//        let indexPath = collectionView?.indexPath(for: collectionView!)
-//        collectionView?.reloadItems(at: indexPath)
-//    }
     
-    func updateLayout() {
-        let layout = PinterestLayout()
-        layout.delegate = self
-        
-        collectionView?.reloadData()
-        collectionView?.collectionViewLayout.invalidateLayout()
-        collectionView?.collectionViewLayout = layout
-    }
-    func makePlaceHolders() -> [UIImage]? {
-        guard let image = UIImage(named: "placeholder") else {
-            return nil
-        }
-        return [UIImage](repeating: image, count: queryAmount)
+//    func updateLayout() {
+//        let layout = PinterestLayout()
+//        layout.delegate = self
+//
+//        //collectionView?.reloadData()
+//        collectionView?.collectionViewLayout.invalidateLayout()
+//        collectionView?.collectionViewLayout = layout
+//    }
+    func makePlaceHolders() -> [ImgurGalleryItem] {
+        return [ImgurGalleryItem](repeating: ImgurGalleryItem(), count: queryAmount)
     }
     func reload(collectionView: UICollectionView){
         let contentOffset = collectionView.contentOffset
-        updateLayout()
+        
+        let layout = PinterestLayout()
+        layout.delegate = self
+        collectionView.collectionViewLayout.invalidateLayout()
+        collectionView.collectionViewLayout = layout
+        
         collectionView.setContentOffset(contentOffset, animated: false)
     }
 }
 //MARK: CollectionView Datasource & Delegate
 extension ViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return images.count
+        return galleryItems.count
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GalleryViewCell.identifier, for: indexPath) as! GalleryViewCell
-        cell.configure(image: images[indexPath.row])
+        let image = galleryItems[indexPath.row].image
+        cell.configure(image: image)
         return cell
     }
 }
 extension ViewController: UICollectionViewDelegate {
-//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        collectionView.reloadItems(at: indexPaths)
-//    }
 }
 //MARK: Pinterest Layout Delegate
 extension ViewController: PinterestLayoutDelegate {
     func collectionView(collectionView: UICollectionView, heightForItemAtIndexPath indexPath: IndexPath) -> CGFloat {
-        return images[indexPath.row].size.height
+        let image = galleryItems[indexPath.row].image
+        return image.size.height
     }
 }
 
