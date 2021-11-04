@@ -17,6 +17,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         collectionView?.dataSource = self
+//        let layout = PinterestLayout()
         let layout = UICollectionViewFlowLayout()
         collectionView?.delegate = self
         collectionView?.collectionViewLayout = layout
@@ -28,9 +29,10 @@ class ViewController: UIViewController {
             do {
                 let model = try await imgurManager.requestGallery()
                 let imagesGot = try await imgurManager.downloadImage(model)
-                let galleryModel = imgurManager.getImgurModels(with: model)
-                self.images.append(contentsOf: imagesGot)
-                collectionView?.reloadData()
+                print("Done")
+//                let galleryModel = imgurManager.getImgurModels(with: model)
+//                self.images.append(contentsOf: imagesGot)
+//                collectionView?.reloadData()
             } catch {
                 print(error)
             }
@@ -54,4 +56,10 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: view.frame.width/2 - 10, height: 200)
     }
 }
+//extension ViewController: PinterestLayoutDelegate {
+//    func collectionView(collectionView: UICollectionView, heightForItemAtIndexPath indexPath: IndexPath) -> CGFloat {
+//        //return images[indexPath.row].size.height
+//        return 100
+//    }
+//}
 
