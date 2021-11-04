@@ -53,10 +53,43 @@ struct ImgurNetworkManager {
     }
 
 //MARK: Download all Images Thumbnail From Gallery
-    func downloadImage(_ model: ImageModel) async throws -> [UIImage] {
+//    func downloadImage(_ model: ImageModel) async throws -> [UIImage] {
+//        guard let links = try? getImgLink(with: model) else {
+//            print("Here? 1")
+//            throw ImageDownloadError.badImage
+//        }
+//        var urls = [URL]()
+//        var images = [UIImage]()
+//        //Check links
+//        for link in links {
+//            guard let url = URL(string: link) else {
+//                print("Check Links failed")
+//                throw ImageDownloadError.badImage
+//            }
+//            urls.append(url)
+//        }
+//        //Downloading
+//        for url in urls {
+//            let request = URLRequest(url: url)
+//            let (data,response) = try await URLSession.shared.data(for: request)
+////            print("\((response as? HTTPURLResponse)?.statusCode) : \(url)")
+//            guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+//                print("Here? 2")
+//                throw ImageDownloadError.badImage
+//            }
+//
+//            guard let image = UIImage(data: data) else {
+//                print("Problem making an image")
+//                throw ImageDownloadError.badImage
+//            }
+//            images.append(image)
+//        }
+//        return images
+//    }
+    func getAllLinks(_ model: ImageModel) throws -> [URL] {
         guard let links = try? getImgLink(with: model) else {
             print("Here? 1")
-            throw ImageDownloadError.badImage
+            throw ImageDownloadError.badLink
         }
         var urls = [URL]()
         var images = [UIImage]()
@@ -68,24 +101,20 @@ struct ImgurNetworkManager {
             }
             urls.append(url)
         }
-        //Downloading
-        for url in urls {
-            let request = URLRequest(url: url)
-            //print(url)
-            let (data,response) = try await URLSession.shared.data(for: request)
+        return urls
+    }
+    func singleDownload(with link: URL) async throws {
+        let request = URLRequest(url: link)
+        let (data,response) = try await URLSession.shared.data(for: request)
 //            print("\((response as? HTTPURLResponse)?.statusCode) : \(url)")
-            guard (response as? HTTPURLResponse)?.statusCode == 200 else {
-                print("Here? 2")
-                throw ImageDownloadError.badImage
-            }
-
-            guard let image = UIImage(data: data) else {
-                print("Problem making an image")
-                throw ImageDownloadError.badImage
-            }
-            images.append(image)
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            throw ImageDownloadError.badImage
         }
-        return images
+
+        guard let image = UIImage(data: data) else {
+            throw ImageDownloadError.badImage
+        }
+        print(image.size)
     }
 
 //MARK: Getting the Gallery Item model to move to detail screen and then to be use for API Call
@@ -109,7 +138,7 @@ struct ImgurNetworkManager {
     private func concatStr(with string: String) throws -> String {
         var result = string
         guard let i = result.lastIndex(of: ".") else {
-            throw ImageDownloadError.badImage
+            throw ImageDownloadError.badLink
         }
         result.insert("t", at: i)
         return result
@@ -124,7 +153,7 @@ struct ImgurNetworkManager {
             return nil
         }
     }
-    func sortingType(with obj: SingleImage) -> String {
+    func sortingType(with obj: SingleImage) throws -> String {
         var link = ""
         //Can safely force unwrap images
         if obj.is_album {
@@ -133,7 +162,7 @@ struct ImgurNetworkManager {
             if firstImg.animated {
                 //Checking for video type
                 guard let type = ImageType.init(rawValue: firstImg.type) else {
-                    fatalError("Wrong type")
+                    throw ImageDownloadError.badLink
                 }
                 switch type {
                 case .mp4:
@@ -147,7 +176,7 @@ struct ImgurNetworkManager {
         } else {
             if obj.animated! {
                 guard let type = ImageType.init(rawValue: obj.type!) else {
-                    fatalError("Wrong type")
+                    throw ImageDownloadError.badLink
                 }
                 switch type {
                 case .mp4:
@@ -200,6 +229,7 @@ struct ImgurNetworkManager {
     enum ImageDownloadError: Error {
         case invalidData
         case badImage
+        case badLink
     }
     //MARK: Gallery image Type enum
     enum ImageType: String {

@@ -32,10 +32,14 @@ class ViewController: UIViewController {
     func initalNetworking() async {
         do {
             let model = try await imgurManager.requestGallery()
-            print(model.data[0])
-            let imagesGot = try await imgurManager.downloadImage(model)
+            //let imagesGot = try await imgurManager.downloadImage(model)
             //let galleryModel = imgurManager.getImgurModels(with: model)
-            self.images = imagesGot
+            
+//            self.images = imagesGot
+            let urls = try imgurManager.getAllLinks(model)
+            for url in urls {
+                try await imgurManager.singleDownload(with: url)
+            }
             print("Done")
         } catch {
             print(error)
@@ -86,9 +90,9 @@ extension ViewController: UICollectionViewDataSource {
     }
 }
 extension ViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        collectionView.reloadItems(at: indexPaths)
-    }
+//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//        collectionView.reloadItems(at: indexPaths)
+//    }
 }
 //MARK: Pinterest Layout Delegate
 extension ViewController: PinterestLayoutDelegate {
