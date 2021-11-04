@@ -18,27 +18,27 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         collectionView?.dataSource = self
+        collectionView?.delegate = self
         let layout = PinterestLayout()
         layout.delegate = self
         collectionView?.collectionViewLayout = layout
-        networking()
+        Task {
+            await initalNetworking()
+            updateLayout()
+            print("Finished")
+        }
     }
     
-    func networking(){
-        Task {
-            do {
-                let model = try await imgurManager.requestGallery()
-                print(model.data[0])
-                print("Finish calling data")
-                let imagesGot = try await imgurManager.downloadImage(model)
-                print("Finish downloading images")
-                //let galleryModel = imgurManager.getImgurModels(with: model)
-                self.images = imagesGot
-                print(images.count)
-                updateLayout()
-            } catch {
-                print(error)
-            }
+    func initalNetworking() async {
+        do {
+            let model = try await imgurManager.requestGallery()
+            print(model.data[0])
+            let imagesGot = try await imgurManager.downloadImage(model)
+            //let galleryModel = imgurManager.getImgurModels(with: model)
+            self.images = imagesGot
+            print("Done")
+        } catch {
+            print(error)
         }
     }
     @IBAction func testAdd(_ sender: UIButton){
@@ -49,6 +49,10 @@ class ViewController: UIViewController {
         self.images.append(contentsOf: newImgs)
         reload(collectionView: collectionView!)
     }
+//    @IBAction func randomPressed(_ sender: Any) {
+//        let indexPath = collectionView?.indexPath(for: collectionView!)
+//        collectionView?.reloadItems(at: indexPath)
+//    }
     
     func updateLayout() {
         let layout = PinterestLayout()
@@ -70,7 +74,7 @@ class ViewController: UIViewController {
         collectionView.setContentOffset(contentOffset, animated: false)
     }
 }
-//MARK: CollectionView Datasource
+//MARK: CollectionView Datasource & Delegate
 extension ViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return images.count
@@ -81,10 +85,16 @@ extension ViewController: UICollectionViewDataSource {
         return cell
     }
 }
+extension ViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.reloadItems(at: indexPaths)
+    }
+}
 //MARK: Pinterest Layout Delegate
 extension ViewController: PinterestLayoutDelegate {
     func collectionView(collectionView: UICollectionView, heightForItemAtIndexPath indexPath: IndexPath) -> CGFloat {
         return images[indexPath.row].size.height
     }
 }
+
 

@@ -111,7 +111,7 @@ struct ImgurNetworkManager {
         guard let i = result.lastIndex(of: ".") else {
             throw ImageDownloadError.badImage
         }
-        result.insert("m", at: i)
+        result.insert("t", at: i)
         return result
     }
     
