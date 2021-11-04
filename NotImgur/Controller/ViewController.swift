@@ -47,7 +47,7 @@ class ViewController: UIViewController {
             return
         }
         self.images.append(contentsOf: newImgs)
-        updateLayout()
+        reload(collectionView: collectionView!)
     }
     
     func updateLayout() {
@@ -63,6 +63,11 @@ class ViewController: UIViewController {
             return nil
         }
         return [UIImage](repeating: image, count: 60)
+    }
+    func reload(collectionView: UICollectionView){
+        let contentOffset = collectionView.contentOffset
+        updateLayout()
+        collectionView.setContentOffset(contentOffset, animated: false)
     }
 }
 //MARK: CollectionView Datasource
