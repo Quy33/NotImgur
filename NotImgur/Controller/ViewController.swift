@@ -11,22 +11,15 @@ class ViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView?
     var imgurManager = ImgurNetworkManager()
     var imgurItems = [ImgurGalleryItem]()
-    var images = [UIImage]()
-//    var test : [UIImage] = [] {
-//        didSet {
-//            updateLayout()
-//        }
-//    }
+    var images = [UIImage](repeating: UIImage(named: "placeholder")!, count: 60)
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         collectionView?.dataSource = self
         let layout = PinterestLayout()
-        layout.numberOfColumns = 2
-//        layout.delegate = self
-//        let layout = UICollectionViewFlowLayout()
-//        collectionView?.delegate = self
+        layout.delegate = self
         collectionView?.collectionViewLayout = layout
         networking()
     }
@@ -39,8 +32,8 @@ class ViewController: UIViewController {
                 print("Finish calling data")
                 let imagesGot = try await imgurManager.downloadImage(model)
                 print("Finish downloading images")
-//                let galleryModel = imgurManager.getImgurModels(with: model)
-                self.images.append(contentsOf: imagesGot)
+                //let galleryModel = imgurManager.getImgurModels(with: model)
+                self.images = imagesGot
                 print(images.count)
                 updateLayout()
             } catch {
@@ -48,18 +41,29 @@ class ViewController: UIViewController {
             }
         }
     }
+    @IBAction func testAdd(_ sender: UIButton){
+        guard let newImgs = makePlaceHolders() else {
+            print("Can't find place holder image")
+            return
+        }
+        self.images.append(contentsOf: newImgs)
+        updateLayout()
+    }
     
     func updateLayout() {
         let layout = PinterestLayout()
         layout.delegate = self
-        layout.numberOfColumns = 2
         
         collectionView?.reloadData()
         collectionView?.collectionViewLayout.invalidateLayout()
         collectionView?.collectionViewLayout = layout
-        
     }
-    
+    func makePlaceHolders() -> [UIImage]? {
+        guard let image = UIImage(named: "placeholder") else {
+            return nil
+        }
+        return [UIImage](repeating: image, count: 60)
+    }
 }
 //MARK: CollectionView Datasource
 extension ViewController: UICollectionViewDataSource {
@@ -72,12 +76,7 @@ extension ViewController: UICollectionViewDataSource {
         return cell
     }
 }
-//MARK: Flow Layout Delegate
-extension ViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width/2 - 10, height: 200)
-    }
-}
+//MARK: Pinterest Layout Delegate
 extension ViewController: PinterestLayoutDelegate {
     func collectionView(collectionView: UICollectionView, heightForItemAtIndexPath indexPath: IndexPath) -> CGFloat {
         return images[indexPath.row].size.height
