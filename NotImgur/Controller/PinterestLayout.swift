@@ -84,6 +84,10 @@ class PinterestLayout: UICollectionViewLayout {
     }
     //Bonus func to get the indexPath from cache
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        if cache.isEmpty {
+            print("empty")
+            return nil
+        }
         return cache[indexPath.item]
     }
 }

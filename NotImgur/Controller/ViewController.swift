@@ -12,6 +12,11 @@ class ViewController: UIViewController {
     var imgurManager = ImgurNetworkManager()
     var imgurItems = [ImgurGalleryItem]()
     var images = [UIImage]()
+//    var test : [UIImage] = [] {
+//        didSet {
+//            updateLayout()
+//        }
+//    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,28 +36,28 @@ class ViewController: UIViewController {
             do {
                 let model = try await imgurManager.requestGallery()
                 print(model.data[0])
-//                print("Finish calling data")
+                print("Finish calling data")
                 let imagesGot = try await imgurManager.downloadImage(model)
-//                print("Finish downloading images")
+                print("Finish downloading images")
 //                let galleryModel = imgurManager.getImgurModels(with: model)
                 self.images.append(contentsOf: imagesGot)
-                
-                collectionView?.reloadData()
-                collectionView?.collectionViewLayout.invalidateLayout()
+                print(images.count)
+                updateLayout()
             } catch {
                 print(error)
             }
         }
     }
     
-    @IBAction func layoutPressed(_ sender: UIButton) {
-        collectionView?.reloadData()
-        
+    func updateLayout() {
         let layout = PinterestLayout()
         layout.delegate = self
         layout.numberOfColumns = 2
+        
+        collectionView?.reloadData()
         collectionView?.collectionViewLayout.invalidateLayout()
         collectionView?.collectionViewLayout = layout
+        
     }
     
 }
