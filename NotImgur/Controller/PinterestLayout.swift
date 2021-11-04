@@ -68,6 +68,7 @@ class PinterestLayout: UICollectionViewLayout {
             //Advance the column
             column = column < (numberOfColumns - 1) ? (column + 1) : 0
         }
+        print("check")
     }
     //This method basically will check if the rect inside the cache is inside the visible rect that the collectionView give back, if so then it will append to make those rect appear.
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {

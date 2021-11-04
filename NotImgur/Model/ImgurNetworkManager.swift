@@ -38,12 +38,24 @@ struct ImgurNetworkManager {
         guard let model = parseGallery(data) else {
             throw ImageDownloadError.invalidData
         }
+//        for i in 0..<model.data.count {
+//            print("\(model.data[i].is_album):\(i)")
+//        }
+//        print(String(data: data, encoding: .utf8)!)
+//        for item in model.data {
+//            if item.is_album {
+//                print(item.images![0].type)
+//            } else {
+//                print(item.type!)
+//            }
+//        }
         return model
     }
 
 //MARK: Download all Images Thumbnail From Gallery
     func downloadImage(_ model: ImageModel) async throws -> [UIImage] {
         guard let links = try? getImgLink(with: model) else {
+            print("Here? 1")
             throw ImageDownloadError.badImage
         }
         var urls = [URL]()
@@ -59,8 +71,11 @@ struct ImgurNetworkManager {
         //Downloading
         for url in urls {
             let request = URLRequest(url: url)
+            //print(url)
             let (data,response) = try await URLSession.shared.data(for: request)
+//            print("\((response as? HTTPURLResponse)?.statusCode) : \(url)")
             guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+                print("Here? 2")
                 throw ImageDownloadError.badImage
             }
 
@@ -87,12 +102,7 @@ struct ImgurNetworkManager {
     private func getImgLink(with model: ImageModel) throws ->[String]{
         var links = [String]()
         for item in model.data {
-            if item.is_album {
-                //Getting the cover of the album
-                links.append(try concatStr(with: item.images![0].link))
-            } else {
-                links.append(try concatStr(with: item.link))
-            }
+            links.append(try concatStr(with: sortingType(with: item)))
         }
         return links
     }
@@ -101,7 +111,7 @@ struct ImgurNetworkManager {
         guard let i = result.lastIndex(of: ".") else {
             throw ImageDownloadError.badImage
         }
-        result.insert("t", at: i)
+        result.insert("m", at: i)
         return result
     }
     
@@ -113,6 +123,43 @@ struct ImgurNetworkManager {
             print(error)
             return nil
         }
+    }
+    func sortingType(with obj: SingleImage) -> String {
+        var link = ""
+        //Can safely force unwrap images
+        if obj.is_album {
+            //Check if it isnt an image
+            let firstImg = obj.images![0]
+            if firstImg.animated {
+                //Checking for video type
+                guard let type = ImageType.init(rawValue: firstImg.type) else {
+                    fatalError("Wrong type")
+                }
+                switch type {
+                case .mp4:
+                    link = firstImg.mp4!
+                case .gif:
+                    link = firstImg.gifv!
+                }
+            } else {
+                link = firstImg.link
+            }
+        } else {
+            if obj.animated! {
+                guard let type = ImageType.init(rawValue: obj.type!) else {
+                    fatalError("Wrong type")
+                }
+                switch type {
+                case .mp4:
+                    link = obj.mp4!
+                case .gif:
+                    link = obj.gifv!
+                }
+            } else {
+                link = obj.link
+            }
+        }
+        return link
     }
 //MARK: Key for gallery when calling API
     struct GalleryKey {
@@ -153,5 +200,12 @@ struct ImgurNetworkManager {
     enum ImageDownloadError: Error {
         case invalidData
         case badImage
+    }
+    //MARK: Gallery image Type enum
+    enum ImageType: String {
+        case mp4 = "video/mp4"
+        case gif = "image/gif"
+//        case jpeg = "image/jpeg"
+//        case png = "image/png"
     }
 }

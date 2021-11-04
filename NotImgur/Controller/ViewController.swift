@@ -17,9 +17,11 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         collectionView?.dataSource = self
-//        let layout = PinterestLayout()
-        let layout = UICollectionViewFlowLayout()
-        collectionView?.delegate = self
+        let layout = PinterestLayout()
+        layout.numberOfColumns = 2
+//        layout.delegate = self
+//        let layout = UICollectionViewFlowLayout()
+//        collectionView?.delegate = self
         collectionView?.collectionViewLayout = layout
         networking()
     }
@@ -28,16 +30,31 @@ class ViewController: UIViewController {
         Task {
             do {
                 let model = try await imgurManager.requestGallery()
+                print(model.data[0])
+//                print("Finish calling data")
                 let imagesGot = try await imgurManager.downloadImage(model)
-                print("Done")
+//                print("Finish downloading images")
 //                let galleryModel = imgurManager.getImgurModels(with: model)
-//                self.images.append(contentsOf: imagesGot)
-//                collectionView?.reloadData()
+                self.images.append(contentsOf: imagesGot)
+                
+                collectionView?.reloadData()
+                collectionView?.collectionViewLayout.invalidateLayout()
             } catch {
                 print(error)
             }
         }
     }
+    
+    @IBAction func layoutPressed(_ sender: UIButton) {
+        collectionView?.reloadData()
+        
+        let layout = PinterestLayout()
+        layout.delegate = self
+        layout.numberOfColumns = 2
+        collectionView?.collectionViewLayout.invalidateLayout()
+        collectionView?.collectionViewLayout = layout
+    }
+    
 }
 //MARK: CollectionView Datasource
 extension ViewController: UICollectionViewDataSource {
@@ -56,10 +73,9 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: view.frame.width/2 - 10, height: 200)
     }
 }
-//extension ViewController: PinterestLayoutDelegate {
-//    func collectionView(collectionView: UICollectionView, heightForItemAtIndexPath indexPath: IndexPath) -> CGFloat {
-//        //return images[indexPath.row].size.height
-//        return 100
-//    }
-//}
+extension ViewController: PinterestLayoutDelegate {
+    func collectionView(collectionView: UICollectionView, heightForItemAtIndexPath indexPath: IndexPath) -> CGFloat {
+        return images[indexPath.row].size.height
+    }
+}
 
