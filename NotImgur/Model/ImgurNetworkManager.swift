@@ -41,25 +41,26 @@ struct ImgurNetworkManager {
     }
 
 //MARK: Download all Images Thumbnail From Gallery
-    func downloadAllImages(_ model: ImageModel) async throws -> [UIImage] {
-        let links = try getAllLinks(model)
-        var images = [UIImage]()
-        //Downloading
-        for link in links {
-            let request = URLRequest(url: link)
-            let (data,response) = try await URLSession.shared.data(for: request)
-//            print("\((response as? HTTPURLResponse)?.statusCode) : \(link)")
-            guard (response as? HTTPURLResponse)?.statusCode == 200 else {
-                throw ImageDownloadError.errorDownloading
-            }
-
-            guard let image = UIImage(data: data) else {
-                throw ImageDownloadError.errorDownloading
-            }
-            images.append(image)
-        }
-        return images
-    }
+//    func downloadBatches(_ model: ImageModel, count: Int) async throws -> [UIImage] {
+//
+//        let links = try getAllLinks(model)
+//        var images = [UIImage]()
+//        //Downloading
+//        for link in links {
+//            let request = URLRequest(url: link)
+//            let (data,response) = try await URLSession.shared.data(for: request)
+////            print("\((response as? HTTPURLResponse)?.statusCode) : \(link)")
+//            guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+//                throw ImageDownloadError.errorDownloading
+//            }
+//
+//            guard let image = UIImage(data: data) else {
+//                throw ImageDownloadError.errorDownloading
+//            }
+//            images.append(image)
+//        }
+//        return images
+//    }
     func getAllLinks(_ model: ImageModel) throws -> [URL] {
         let links = try getImgLink(with: model)
         var urls = [URL]()
@@ -88,7 +89,12 @@ struct ImgurNetworkManager {
     }
 
 //MARK: Updating Gallery Item model to move to detail screen and then to be use for API Call
-
+    func configProperty(model: ImageModel, with items: inout [ImgurGalleryItem]) {
+        for i in 0..<model.data.count {
+            items[i].id = model.data[i].id
+            items[i].isAlbum = model.data[i].is_album
+        }
+    }
      
 //MARK: Misc Function
     private func getImgLink(with model: ImageModel) throws ->[String]{
@@ -103,7 +109,7 @@ struct ImgurNetworkManager {
         guard let i = result.lastIndex(of: ".") else {
             throw ImageDownloadError.badURL
         }
-        result.insert("t", at: i)
+        result.insert("m", at: i)
         return result
     }
     

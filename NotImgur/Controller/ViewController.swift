@@ -33,23 +33,15 @@ class ViewController: UIViewController {
     }
     
     func initalNetworking() async {
+        guard !isDoingTask else {
+            print("Busy downloading initial image")
+            return
+        }
+        isDoingTask = true
         do {
-            let model = try await imgurManager.requestGallery()
-            
-//            self.images = imagesGot
-            let urls = try imgurManager.getAllLinks(model)
-            
-            for i in 0..<galleryItems.count {
-                let newImage = try await imgurManager.singleDownload(with: urls[i])
-                galleryItems[i].image = newImage
-                
-                let indexPath = IndexPath(item: i, section: 0)
-                DispatchQueue.main.async {
-                    self.collectionView?.reloadItems(at: [indexPath])
-                    self.reload(collectionView: self.collectionView!)
-                }
-            }
+            try await performDownloads(count: queryAmount, page: 0)
             print("Done")
+            isDoingTask = false
         } catch {
             print(error)
         }
@@ -62,59 +54,46 @@ class ViewController: UIViewController {
             return
         }
         pageAt += 1
-        
+        isDoingTask = true
         Task {
-            do {
-                isDoingTask = true
-                
-                let model = try await imgurManager.requestGallery(page: pageAt)
-                print(model.data.count)
-                let links = try imgurManager.getAllLinks(model)
-                let upperBounds = model.data.count + galleryItems.count
-                let startingIndex = galleryItems.count
-                
-                var indexes = [IndexPath]()
-                for index in startingIndex..<upperBounds {
-                    let indexPath = IndexPath(item: index, section: 0)
-                    indexes.append(indexPath)
-                }
-                print(indexes)
-                print(indexes.count)
-                
-                for i in 0..<model.data.count {
-                    let newImage = try await imgurManager.singleDownload(with: links[i])
-                    let newItems = ImgurGalleryItem(id: model.data[i].id, is_album: model.data[i].is_album, image: newImage)
-                    
-                    
-                    let indexPath = indexes[i]
-                    galleryItems.append(newItems)
-
-                    DispatchQueue.main.async {
-                        self.collectionView?.reloadItems(at: [indexPath])
-                        self.reload(collectionView: self.collectionView!)
-                    }
-                }
-                
-                isDoingTask = false
-            } catch {
-                print(error)
-            }
+            try await performBatchesDownload(batch: 20, page: pageAt)
+            print("Finish Downloading")
         }
+        isDoingTask = false
     }
     @IBAction func reloadPressed(_ sender: Any) {
         
     }
     
-//    func updateLayout() {
-//        let layout = PinterestLayout()
-//        layout.delegate = self
-//
-//        //collectionView?.reloadData()
-//        collectionView?.collectionViewLayout.invalidateLayout()
-//        collectionView?.collectionViewLayout = layout
-//    }
-    func makePlaceHolders() -> [ImgurGalleryItem] {
-        return [ImgurGalleryItem](repeating: ImgurGalleryItem(), count: queryAmount)
+    func performDownloads(count: Int, page: Int) async throws {
+        let model = try await imgurManager.requestGallery(page: page)
+        
+        let urls = try imgurManager.getAllLinks(model)
+        
+        for i in 0..<count {
+            let newImage = try await imgurManager.singleDownload(with: urls[i])
+            galleryItems[i].image = newImage
+            imgurManager.configProperty(model: model, with: &galleryItems)
+            
+            let indexPath = IndexPath(item: i, section: 0)
+            DispatchQueue.main.async {
+                self.update(collectionView: self.collectionView!, updateItemAt: indexPath)
+            }
+        }
+    }
+    
+    func performBatchesDownload(batch: Int, page: Int) async throws {
+        let model = try await imgurManager.requestGallery(page: page)
+        print(model.data.count)
+    }
+    
+    func update(collectionView: UICollectionView, updateItemAt indexPath: IndexPath){
+        collectionView.reloadItems(at: [indexPath])
+        reload(collectionView: collectionView)
+    }
+
+    func makePlaceHolders(count: Int) -> [ImgurGalleryItem] {
+        return [ImgurGalleryItem](repeating: ImgurGalleryItem(), count: count)
     }
     func reload(collectionView: UICollectionView){
         let contentOffset = collectionView.contentOffset
