@@ -41,10 +41,7 @@ struct ImgurNetworkManager {
     }
 
 //MARK: Download all Images Thumbnail From Gallery
-//    func downloadBatches(_ model: ImageModel, count: Int) async throws -> [UIImage] {
-//
-//        let links = try getAllLinks(model)
-//        var images = [UIImage]()
+    func downloadBatches(links: [URL]) async throws  {
 //        //Downloading
 //        for link in links {
 //            let request = URLRequest(url: link)
@@ -60,18 +57,6 @@ struct ImgurNetworkManager {
 //            images.append(image)
 //        }
 //        return images
-//    }
-    func getAllLinks(_ model: ImageModel) throws -> [URL] {
-        let links = try getImgLink(with: model)
-        var urls = [URL]()
-        //Check links
-        for link in links {
-            guard let url = URL(string: link) else {
-                throw ImageDownloadError.badImage
-            }
-            urls.append(url)
-        }
-        return urls
     }
     
     func singleDownload(with link: URL) async throws -> UIImage {
@@ -97,6 +82,18 @@ struct ImgurNetworkManager {
     }
      
 //MARK: Misc Function
+    func getLinks(from model: ImageModel) throws -> [URL] {
+        let links = try getImgLink(with: model)
+        var urls = [URL]()
+        //Check links
+        for link in links {
+            guard let url = URL(string: link) else {
+                throw ImageDownloadError.badImage
+            }
+            urls.append(url)
+        }
+        return urls
+    }
     private func getImgLink(with model: ImageModel) throws ->[String]{
         var links = [String]()
         for item in model.data {
@@ -159,6 +156,7 @@ struct ImgurNetworkManager {
         }
         return link
     }
+    
 //MARK: Key for gallery when calling API
     struct GalleryKey {
         let sectionID: Section

@@ -56,8 +56,11 @@ class ViewController: UIViewController {
         pageAt += 1
         isDoingTask = true
         Task {
-            try await performBatchesDownload(batch: 20, page: pageAt)
-            print("Finish Downloading")
+            do {
+                try await performBatchesDownload(batch: 20, page: pageAt)
+            } catch {
+                print(error)
+            }
         }
         isDoingTask = false
     }
@@ -68,7 +71,7 @@ class ViewController: UIViewController {
     func performDownloads(count: Int, page: Int) async throws {
         let model = try await imgurManager.requestGallery(page: page)
         
-        let urls = try imgurManager.getAllLinks(model)
+        let urls = try imgurManager.getLinks(from: model)
         
         for i in 0..<count {
             let newImage = try await imgurManager.singleDownload(with: urls[i])
@@ -84,7 +87,26 @@ class ViewController: UIViewController {
     
     func performBatchesDownload(batch: Int, page: Int) async throws {
         let model = try await imgurManager.requestGallery(page: page)
-        print(model.data.count)
+        
+        let urls = try imgurManager.getLinks(from: model)
+        
+        print(urls.count)
+        var count = urls.count
+//        while i != 0 {
+//            if i >= batch {
+//                i = i - batch
+//            } else if i <= batch{
+//                i = i - i
+//            }
+//        }
+        
+        while count != 0 {
+            if count >= batch {
+                count = count - batch
+            } else if count <= batch{
+                count = count - count
+            }
+        }
     }
     
     func update(collectionView: UICollectionView, updateItemAt indexPath: IndexPath){
