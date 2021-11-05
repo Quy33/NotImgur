@@ -25,7 +25,6 @@ struct ImgurNetworkManager {
         else {
             throw ImageDownloadError.invalidData
         }
-        
         var request = URLRequest(url: urlComponents.url!)
         request.setValue(clientID, forHTTPHeaderField: "Authorization")
         
@@ -49,7 +48,7 @@ struct ImgurNetworkManager {
         for link in links {
             let request = URLRequest(url: link)
             let (data,response) = try await URLSession.shared.data(for: request)
-//            print("\((response as? HTTPURLResponse)?.statusCode) : \(url)")
+//            print("\((response as? HTTPURLResponse)?.statusCode) : \(link)")
             guard (response as? HTTPURLResponse)?.statusCode == 200 else {
                 throw ImageDownloadError.errorDownloading
             }
@@ -104,7 +103,7 @@ struct ImgurNetworkManager {
         guard let i = result.lastIndex(of: ".") else {
             throw ImageDownloadError.badURL
         }
-        result.insert("m", at: i)
+        result.insert("t", at: i)
         return result
     }
     
