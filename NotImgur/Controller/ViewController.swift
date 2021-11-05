@@ -7,6 +7,7 @@
 
 import UIKit
 
+
 class ViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView?
     var imgurManager = ImgurNetworkManager()
@@ -79,17 +80,17 @@ class ViewController: UIViewController {
     }
 }
 //MARK: CollectionView Datasource & Delegate
-extension ViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return galleryItems.count
-    }
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GalleryViewCell.identifier, for: indexPath) as! GalleryViewCell
-        let image = galleryItems[indexPath.row].image
-        cell.configure(image: image)
-        return cell
-    }
-}
+//extension ViewController: UICollectionViewDataSource {
+//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+//        return galleryItems.count
+//    }
+//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GalleryViewCell.identifier, for: indexPath) as! GalleryViewCell
+//        let image = galleryItems[indexPath.row].image
+//        cell.configure(image: image)
+//        return cell
+//    }
+//}
 extension ViewController: UICollectionViewDelegate {
 }
 //MARK: Pinterest Layout Delegate
