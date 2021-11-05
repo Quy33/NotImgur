@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     var imgurManager = ImgurNetworkManager()
     var imgurItems = [ImgurGalleryItem]()
     let queryAmount = 60
+    private let pageAt = 0
     var galleryItems = [ImgurGalleryItem](repeating: ImgurGalleryItem(), count: 60)
 
 
@@ -25,7 +26,7 @@ class ViewController: UIViewController {
         layout.delegate = self
         collectionView?.collectionViewLayout = layout
         Task {
-            await initalNetworking()
+            //await initalNetworking()
             print("Finished")
         }
     }
@@ -54,7 +55,21 @@ class ViewController: UIViewController {
     }
     @IBAction func testAdd(_ sender: UIButton){
         galleryItems.append(contentsOf: makePlaceHolders())
-        reload(collectionView: collectionView!)
+        
+        Task {
+            do {
+                let model = try await imgurManager.requestGallery()
+                let images = try await imgurManager.downloadAllImages(model)
+                print("Finished")
+            } catch {
+                print(error)
+            }
+        }
+        
+        //reload(collectionView: collectionView!)
+    }
+    @IBAction func reloadPressed(_ sender: Any) {
+        
     }
     
 //    func updateLayout() {

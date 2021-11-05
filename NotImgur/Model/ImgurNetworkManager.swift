@@ -42,55 +42,38 @@ struct ImgurNetworkManager {
     }
 
 //MARK: Download all Images Thumbnail From Gallery
-//    func downloadImage(_ model: ImageModel) async throws -> [UIImage] {
-//        guard let links = try? getImgLink(with: model) else {
-//            print("Here? 1")
-//            throw ImageDownloadError.badImage
-//        }
-//        var urls = [URL]()
-//        var images = [UIImage]()
-//        //Check links
-//        for link in links {
-//            guard let url = URL(string: link) else {
-//                print("Check Links failed")
-//                throw ImageDownloadError.badImage
-//            }
-//            urls.append(url)
-//        }
-//        //Downloading
-//        for url in urls {
-//            let request = URLRequest(url: url)
-//            let (data,response) = try await URLSession.shared.data(for: request)
-////            print("\((response as? HTTPURLResponse)?.statusCode) : \(url)")
-//            guard (response as? HTTPURLResponse)?.statusCode == 200 else {
-//                print("Here? 2")
-//                throw ImageDownloadError.badImage
-//            }
-//
-//            guard let image = UIImage(data: data) else {
-//                print("Problem making an image")
-//                throw ImageDownloadError.badImage
-//            }
-//            images.append(image)
-//        }
-//        return images
-//    }
-    func getAllLinks(_ model: ImageModel) throws -> [URL] {
-        guard let links = try? getImgLink(with: model) else {
-            print("Here? 1")
-            throw ImageDownloadError.badLink
+    func downloadAllImages(_ model: ImageModel) async throws -> [UIImage] {
+        let links = try getAllLinks(model)
+        var images = [UIImage]()
+        //Downloading
+        for link in links {
+            let request = URLRequest(url: link)
+            let (data,response) = try await URLSession.shared.data(for: request)
+//            print("\((response as? HTTPURLResponse)?.statusCode) : \(url)")
+            guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+                throw ImageDownloadError.errorDownloading
+            }
+
+            guard let image = UIImage(data: data) else {
+                throw ImageDownloadError.errorDownloading
+            }
+            images.append(image)
         }
+        return images
+    }
+    func getAllLinks(_ model: ImageModel) throws -> [URL] {
+        let links = try getImgLink(with: model)
         var urls = [URL]()
         //Check links
         for link in links {
             guard let url = URL(string: link) else {
-                print("Check Links failed")
                 throw ImageDownloadError.badImage
             }
             urls.append(url)
         }
         return urls
     }
+    
     func singleDownload(with link: URL) async throws -> UIImage {
         let request = URLRequest(url: link)
         let (data,response) = try await URLSession.shared.data(for: request)
@@ -119,7 +102,7 @@ struct ImgurNetworkManager {
     private func concatStr(with string: String) throws -> String {
         var result = string
         guard let i = result.lastIndex(of: ".") else {
-            throw ImageDownloadError.badLink
+            throw ImageDownloadError.badURL
         }
         result.insert("m", at: i)
         return result
@@ -143,7 +126,7 @@ struct ImgurNetworkManager {
             if firstImg.animated {
                 //Checking for video type
                 guard let type = ImageType.init(rawValue: firstImg.type) else {
-                    throw ImageDownloadError.badLink
+                    throw ImageDownloadError.badURL
                 }
                 switch type {
                 case .mp4:
@@ -157,7 +140,7 @@ struct ImgurNetworkManager {
         } else {
             if obj.animated! {
                 guard let type = ImageType.init(rawValue: obj.type!) else {
-                    throw ImageDownloadError.badLink
+                    throw ImageDownloadError.badURL
                 }
                 switch type {
                 case .mp4:
@@ -210,7 +193,8 @@ struct ImgurNetworkManager {
     enum ImageDownloadError: Error {
         case invalidData
         case badImage
-        case badLink
+        case errorDownloading
+        case badURL
     }
     //MARK: Gallery image Type enum
     enum ImageType: String {
