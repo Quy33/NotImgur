@@ -9,12 +9,14 @@ import UIKit
 
 class GalleryViewCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView?
-    @IBOutlet weak var title: UILabel?
+    @IBOutlet weak var titleLabel: UILabel?
+    @IBOutlet weak var typeLabel: UILabel!
     
     static let identifier = "GalleryViewCell"
     
-    func configure(image: UIImage, titleAt: String){
+    func configure(image: UIImage, titleAt: String, typeAt: String){
         imageView?.image = image
-        title?.text = titleAt
+        titleLabel?.text = titleAt
+        typeLabel?.text = typeAt
     }
 }
