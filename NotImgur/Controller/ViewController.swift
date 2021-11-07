@@ -36,7 +36,7 @@ class ViewController: UIViewController {
             print("Begin initial setup")
             isDoingTask = true
             do {
-                try await performDownloads(count: queryAmount, page: 0, isReset: false)
+                try await performDownloads(count: queryAmount, page: 0)
                 
                 print("Done")
                 isDoingTask = false
@@ -59,7 +59,7 @@ class ViewController: UIViewController {
             isDoingTask = true
             Task {
                 do {
-                    try await performBatchesDownload(page: pageAt,isReset: false)
+                    try await performBatchesDownload(page: pageAt)
                     isDoingTask = false
                     print("Finish Loading page \(pageAt)")
                 } catch {
@@ -79,12 +79,14 @@ class ViewController: UIViewController {
             pageAt = 0
             galleryItems = makePlaceHolders(count: queryAmount)
             
-            reset(collectionView: collectionView)
             collectionView.reloadData()
+            reset(collectionView: collectionView)
+            
             
             Task {
                 do {
-                    try await performDownloads(count: queryAmount, page: pageAt, isReset: true)
+                    try await performDownloads(count: queryAmount, page: pageAt)
+                    
                     isDoingTask = false
                     print("Finished Reloading")
                 } catch {
@@ -94,7 +96,7 @@ class ViewController: UIViewController {
         }
 
     //MARK: download Functions
-    func performDownloads(count: Int, page: Int, isReset: Bool) async throws {
+    func performDownloads(count: Int, page: Int) async throws {
         let model = try await imgurManager.requestGallery(page: page)
         
         let urls = try imgurManager.getLinks(from: model)
@@ -107,12 +109,12 @@ class ViewController: UIViewController {
             
             let indexPath = IndexPath(item: i, section: 0)
             DispatchQueue.main.async {
-                self.update(collectionView: self.collectionView, updateItemAt: indexPath, isReset: isReset)
+                self.update(collectionView: self.collectionView, updateItemAt: indexPath)
             }
         }
     }
     
-    func performBatchesDownload(page: Int, isReset: Bool) async throws {
+    func performBatchesDownload(page: Int) async throws {
         let model = try await imgurManager.requestGallery(page: page)
         
         let urls = try imgurManager.getLinks(from: model)
@@ -138,12 +140,8 @@ class ViewController: UIViewController {
     }
     
 //MARK: Function to update & reset the collectionView
-    func update(collectionView: UICollectionView, updateItemAt indexPath: IndexPath, isReset: Bool){
-        if isReset {
-            reset(collectionView: collectionView)
-        } else {
-            reload(collectionView: collectionView)
-        }
+    func update(collectionView: UICollectionView, updateItemAt indexPath: IndexPath){
+        reload(collectionView: collectionView)
         collectionView.reloadItems(at: [indexPath])
     }
     func reload(collectionView: UICollectionView){
