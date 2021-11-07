@@ -10,7 +10,6 @@ import UIKit
 class ViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     var imgurManager = ImgurNetworkManager()
-    var imgurItems = [ImgurGalleryItem]()
     let queryAmount = 60
     private var pageAt = 0
     private var isDoingTask = false
@@ -34,6 +33,7 @@ class ViewController: UIViewController {
                 print("Busy downloading initial image")
                 return
             }
+            print("Begin initial setup")
             isDoingTask = true
             do {
                 try await performDownloads(count: queryAmount, page: 0, isReset: false)
@@ -43,7 +43,7 @@ class ViewController: UIViewController {
             } catch {
                 print(error)
             }
-            print("Finished Downloading")
+            print("Finished initial setup")
         }
     }
         
@@ -54,6 +54,7 @@ class ViewController: UIViewController {
                 print("Busy Adding Images")
                 return
             }
+            print("Begin Adding more Images")
             pageAt += 1
             isDoingTask = true
             Task {
@@ -73,6 +74,7 @@ class ViewController: UIViewController {
                 print("Busy Adding Images")
                 return
             }
+            print("Begin reloading")
             isDoingTask = true
             pageAt = 0
             galleryItems = makePlaceHolders(count: queryAmount)
@@ -102,7 +104,6 @@ class ViewController: UIViewController {
         for i in 0..<count {
             let newImage = try await imgurManager.singleDownload(with: urls[i])
             galleryItems[i].image = newImage
-            
             
             let indexPath = IndexPath(item: i, section: 0)
             DispatchQueue.main.async {
