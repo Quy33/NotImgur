@@ -179,7 +179,7 @@ extension ViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GalleryViewCell.identifier, for: indexPath) as! GalleryViewCell
         let image = galleryItems[indexPath.row].image
-        let test = "afjaldfafkalsjfkdajfklajfd;klasjfkasdjfklasjdfklasdjfkadsjfkalsdjfkas;fjalskdfjasdkl;fjaslkjfalsk;dfjsakldfjadskl;fjaskl;dfjadlkfjalksfjasd;fadklfjasldfkajs;fkasdjfl;asjfasklf;adksflajsdklfajsdfklasjfklasjdfl;asfjsdklajfkalsjdfal;skdfjaslk;fjadls;fadsklfd"
+        let test = "Test Title"
         cell.configure(image: image,titleAt: test)
         return cell
     }
