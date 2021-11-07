@@ -179,7 +179,8 @@ extension ViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GalleryViewCell.identifier, for: indexPath) as! GalleryViewCell
         let image = galleryItems[indexPath.row].image
-        cell.configure(image: image)
+        let test = "afjaldfafkalsjfkdajfklajfd;klasjfkasdjfklasjdfklasdjfkadsjfkalsdjfkas;fjalskdfjasdkl;fjaslkjfalsk;dfjsakldfjadskl;fjaskl;dfjadlkfjalksfjasd;fadklfjasldfkajs;fkasdjfl;asjfasklf;adksflajsdklfajsdfklasjfklasjdfl;asfjsdklajfkalsjdfal;skdfjaslk;fjadls;fadsklfd"
+        cell.configure(image: image,titleAt: test)
         return cell
     }
 }
@@ -189,6 +190,12 @@ extension ViewController: UICollectionViewDelegate {
 extension ViewController: PinterestLayoutDelegate {
     func collectionView(collectionView: UICollectionView, heightForItemAtIndexPath indexPath: IndexPath) -> CGFloat {
         let image = galleryItems[indexPath.row].image
+        
+        if let cell = collectionView.cellForItem(at: indexPath) as? GalleryViewCell {
+            let label = cell.title!
+            return image.size.height + label.frame.height
+        }
+        
         return image.size.height
     }
 }

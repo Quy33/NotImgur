@@ -22,32 +22,47 @@
                                 <rect key="frame" x="0.0" y="88" width="414" height="774"/>
                                 <color key="backgroundColor" name="AccentColor"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="saI-r2-qbB">
-                                    <size key="itemSize" width="128" height="128"/>
+                                    <size key="itemSize" width="173" height="217"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="GalleryViewCell" id="q3e-BL-ym2" customClass="GalleryViewCell" customModule="NotImgur" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="173" height="217"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="a6a-zF-uLZ">
-                                            <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="173" height="217"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="U7w-iu-nTK">
-                                                    <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="173" height="187"/>
                                                 </imageView>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="heD-uw-kaZ">
+                                                    <rect key="frame" x="0.0" y="187" width="173" height="30"/>
+                                                    <color key="backgroundColor" systemColor="systemGrayColor"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="30" id="jPh-PT-fw8"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="U7w-iu-nTK" firstAttribute="top" secondItem="a6a-zF-uLZ" secondAttribute="top" id="39V-ma-74Z"/>
-                                                <constraint firstAttribute="bottom" secondItem="U7w-iu-nTK" secondAttribute="bottom" id="5Eb-2Q-a1d"/>
-                                                <constraint firstAttribute="trailing" secondItem="U7w-iu-nTK" secondAttribute="trailing" id="7Vh-zl-SdX"/>
-                                                <constraint firstItem="U7w-iu-nTK" firstAttribute="leading" secondItem="a6a-zF-uLZ" secondAttribute="leading" id="H6l-Cr-W7V"/>
+                                                <constraint firstAttribute="trailing" secondItem="U7w-iu-nTK" secondAttribute="trailing" id="Dl7-cM-DSu"/>
+                                                <constraint firstItem="heD-uw-kaZ" firstAttribute="leading" secondItem="a6a-zF-uLZ" secondAttribute="leading" id="GqP-bv-8Ql"/>
+                                                <constraint firstItem="U7w-iu-nTK" firstAttribute="top" secondItem="a6a-zF-uLZ" secondAttribute="top" id="OFw-YT-03C"/>
+                                                <constraint firstAttribute="trailing" secondItem="heD-uw-kaZ" secondAttribute="trailing" id="UAo-41-2S9"/>
+                                                <constraint firstItem="heD-uw-kaZ" firstAttribute="top" secondItem="U7w-iu-nTK" secondAttribute="bottom" id="cnW-mM-otj"/>
+                                                <constraint firstItem="U7w-iu-nTK" firstAttribute="leading" secondItem="a6a-zF-uLZ" secondAttribute="leading" id="se7-ce-tSn"/>
+                                                <constraint firstAttribute="bottom" secondItem="heD-uw-kaZ" secondAttribute="bottom" id="zi3-yc-Q5z"/>
                                             </constraints>
                                         </collectionViewCellContentView>
+                                        <size key="customSize" width="173" height="217"/>
                                         <connections>
                                             <outlet property="imageView" destination="U7w-iu-nTK" id="gwr-Dq-qkU"/>
+                                            <outlet property="title" destination="heD-uw-kaZ" id="VFJ-tN-A6A"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -119,6 +134,9 @@
         </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGrayColor">
+            <color red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
