@@ -41,23 +41,6 @@ struct ImgurNetworkManager {
     }
 
 //MARK: Download all Images Thumbnail From Gallery
-    func downloadBatches(links: [URL]) async throws  {
-//        //Downloading
-//        for link in links {
-//            let request = URLRequest(url: link)
-//            let (data,response) = try await URLSession.shared.data(for: request)
-////            print("\((response as? HTTPURLResponse)?.statusCode) : \(link)")
-//            guard (response as? HTTPURLResponse)?.statusCode == 200 else {
-//                throw ImageDownloadError.errorDownloading
-//            }
-//
-//            guard let image = UIImage(data: data) else {
-//                throw ImageDownloadError.errorDownloading
-//            }
-//            images.append(image)
-//        }
-//        return images
-    }
     
     func singleDownload(with link: URL) async throws -> UIImage {
         let request = URLRequest(url: link)
@@ -203,7 +186,5 @@ struct ImgurNetworkManager {
     enum ImageType: String {
         case mp4 = "video/mp4"
         case gif = "image/gif"
-//        case jpeg = "image/jpeg"
-//        case png = "image/png"
     }
 }
