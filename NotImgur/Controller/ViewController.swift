@@ -48,7 +48,7 @@ class ViewController: UIViewController {
     }
         
 //MARK: Buttons
-        @IBAction func testAdd(_ sender: UIButton){
+        @IBAction func addPressed(_ sender: UIButton){
             
             guard !isDoingTask else {
                 print("Busy Adding Images")
@@ -59,11 +59,13 @@ class ViewController: UIViewController {
             Task {
                 do {
                     try await performBatchesDownload(page: pageAt,isReset: false)
+                    isDoingTask = false
+                    print("Finish Loading page \(pageAt)")
                 } catch {
                     print(error)
                 }
             }
-            isDoingTask = false
+            
         }
 
         @IBAction func reloadPressed(_ sender: Any) {
@@ -81,9 +83,8 @@ class ViewController: UIViewController {
             Task {
                 do {
                     try await performDownloads(count: queryAmount, page: pageAt, isReset: true)
-                    
-                    print("Finished Reloading")
                     isDoingTask = false
+                    print("Finished Reloading")
                 } catch {
                     print(error)
                 }
@@ -115,24 +116,19 @@ class ViewController: UIViewController {
         
         let urls = try imgurManager.getLinks(from: model)
         
-        let startingIndex = galleryItems.count
-        let newItemCount = model.data.count
-        let upperBound = model.data.count + startingIndex
+        async let images = try await imgurManager.multipleDownload(with: urls)
         
-        galleryItems.append(contentsOf: makePlaceHolders(count: newItemCount))
+        var items = [ImgurGalleryItem]()
         
-        var j = 0
+        for i in 0..<model.data.count {
+            let newItem = ImgurGalleryItem(id: model.data[i].id, is_album: model.data[i].is_album, image: try await images[i])
+            items.append(newItem)
+        }
         
-        print(galleryItems.count)
-        for i in startingIndex..<upperBound {
-            let newImage = try await imgurManager.singleDownload(with: urls[j])
-            galleryItems[i].image = newImage
-            
-            let indexPath = IndexPath(item: i, section: 0)
-            DispatchQueue.main.async {
-                self.update(collectionView: self.collectionView, updateItemAt: indexPath, isReset: isReset)
-            }
-            j += 1
+        galleryItems.append(contentsOf: items)
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+            self.reload(collectionView: self.collectionView)
         }
     }
     

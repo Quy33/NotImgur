@@ -55,6 +55,26 @@ struct ImgurNetworkManager {
         }
         return image
     }
+    func multipleDownload(with links: [URL]) async throws -> [UIImage] {
+        return await withTaskGroup(of: UIImage.self, body: { group in
+            for link in links {
+                group.addTask {
+                    do {
+                        let image = try await singleDownload(with: link)
+                        return image
+                    } catch {
+                        return UIImage(named: "placeholder")!
+                    }
+                }
+            }
+            
+            var results = [UIImage]()
+            for await result in group {
+                results.append(result)
+            }
+            return results
+        })
+    }
 
 //MARK: Updating Gallery Item model to move to detail screen and then to be use for API Call
     func configProperty(model: ImageModel, with items: inout [ImgurGalleryItem]) {
