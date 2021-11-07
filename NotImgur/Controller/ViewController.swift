@@ -139,6 +139,13 @@ class ViewController: UIViewController {
         return [ImgurGalleryItem](repeating: ImgurGalleryItem(), count: count)
     }
     
+    func check() {
+        for item in galleryItems {
+            print(item.id)
+        }
+        print(galleryItems.count)
+    }
+    
 //MARK: Function to update & reset the collectionView
     func update(collectionView: UICollectionView, updateItemAt indexPath: IndexPath){
         reload(collectionView: collectionView)
