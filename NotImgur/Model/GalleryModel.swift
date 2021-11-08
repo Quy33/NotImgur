@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ImageModel: Decodable {
+struct GalleryModel: Decodable {
     let data: [SingleImage]
 }
 struct SingleImage: Decodable {
@@ -28,3 +28,5 @@ struct MultiImage: Decodable {
     let gifv: String?
     let animated: Bool
 }
+
+

@@ -25,7 +25,7 @@ class ViewController: UIViewController {
         
         setLayout(collectionView: collectionView)
         
-        imgurManager.configThumbnail = .mediumThumbnail
+        imgurManager.configThumbnail = .smallSquare
         initialNetworking()
     }
     
@@ -101,6 +101,19 @@ class ViewController: UIViewController {
     func performDownloads(count: Int, page: Int) async throws {
         let model = try await imgurManager.requestGallery(page: page)
         
+//        for item in model.data {
+//            if item.type == ImgurNetworkManager.ImageType.gif.rawValue {
+//                print(item.mp4)
+//            }
+//            if item.is_album {
+//                for album in item.images! {
+//                    if album.type == ImgurNetworkManager.ImageType.gif.rawValue {
+//                        print(album.mp4)
+//                    }
+//                }
+//            }
+//        }
+        
         let urls = try imgurManager.getLinks(from: model)
         
         imgurManager.configProperty(model: model, with: &galleryItems)
@@ -148,10 +161,10 @@ class ViewController: UIViewController {
     }
     
     func check() {
-        for item in galleryItems {
-            print(item.type)
-        }
-        print(galleryItems.count)
+//        for item in galleryItems {
+//            print(item.type)
+//        }
+//        print(galleryItems.count)
     }
     
 //MARK: Function to update & reset the collectionView
@@ -209,8 +222,8 @@ extension ViewController: UICollectionViewDelegate {
         guard let destination = segue.destination as? DetailTableViewController else {
             fatalError("Cannot find the destination")
         }
-        destination.tuple.id = galleryItems[indexPathToMove.item].id
-        destination.tuple.is_album = galleryItems[indexPathToMove.item].isAlbum
+//        destination.tuple.id = galleryItems[indexPathToMove.item].id
+//        destination.tuple.is_album = galleryItems[indexPathToMove.item].isAlbum
     }
 }
 //MARK: Pinterest Layout Delegate

@@ -23,7 +23,7 @@ struct ImgurNetworkManager {
     
 
 //MARK: Getting Gallery Information
-    func requestGallery(section: GalleryKey.Section = .hot, sort: GalleryKey.Sort = .viral, window: GalleryKey.Window = .day, page: Int = 0) async throws -> ImageModel
+    func requestGallery(section: GalleryKey.Section = .hot, sort: GalleryKey.Sort = .viral, window: GalleryKey.Window = .day, page: Int = 0) async throws -> GalleryModel
     {
         //Filling the URL for when calling the API
         let gallery = GalleryKey(sectionID: section, sortID: sort, windowID: window)
@@ -44,11 +44,8 @@ struct ImgurNetworkManager {
         guard let model = parseGallery(data) else {
             throw ImageDownloadError.invalidData
         }
+
         return model
-    }
-    
-    func requestDetail(with id: String) {
-        //
     }
 
 //MARK: Download all Images Thumbnail From Gallery
@@ -88,7 +85,7 @@ struct ImgurNetworkManager {
     }
 
 //MARK: Updating Gallery Item model to move to detail screen and then to be use for API Call
-    func configProperty(model: ImageModel, with items: inout [ImgurGalleryItem]) {
+    func configProperty(model: GalleryModel, with items: inout [ImgurGalleryItem]) {
         for i in 0..<model.data.count {
             items[i].id = model.data[i].id
             items[i].isAlbum = model.data[i].is_album
@@ -98,7 +95,7 @@ struct ImgurNetworkManager {
     }
      
 //MARK: Misc Function
-    func getLinks(from model: ImageModel) throws -> [URL] {
+    func getLinks(from model: GalleryModel) throws -> [URL] {
         let links = try getImgLink(with: model)
         var urls = [URL]()
         //Check links
@@ -110,10 +107,10 @@ struct ImgurNetworkManager {
         }
         return urls
     }
-    private func getImgLink(with model: ImageModel) throws ->[String]{
+    private func getImgLink(with model: GalleryModel) throws ->[String]{
         var links = [String]()
         for item in model.data {
-            links.append(try concatStr(with: sortingType(with: item)))
+            links.append(try concatStr(with: sortingGallery(with: item)))
         }
         return links
     }
@@ -126,9 +123,9 @@ struct ImgurNetworkManager {
         return result
     }
     
-    private func parseGallery(_ data: Data)-> ImageModel? {
+    private func parseGallery(_ data: Data)-> GalleryModel? {
         do {
-            let decodedData = try JSONDecoder().decode(ImageModel.self, from: data)
+            let decodedData = try JSONDecoder().decode(GalleryModel.self, from: data)
             return decodedData
         } catch {
             print(error)
@@ -136,7 +133,7 @@ struct ImgurNetworkManager {
         }
     }
     
-    private func sortingType(with obj: SingleImage) throws -> String {
+    private func sortingGallery(with obj: SingleImage) throws -> String {
         var link = ""
         //Can safely force unwrap images
         if obj.is_album {
@@ -175,9 +172,79 @@ struct ImgurNetworkManager {
                 link = obj.link
             }
         }
+
         return link
     }
     
+//MARK: Detail Screen Networking
+    
+    func getDetail(with tuple: (id: String, isAlbum: Bool) ) async throws {
+        
+        let detail = tuple.isAlbum ? "album" : "image"
+        
+        let urlString = "\(baseURL)/\(detail)/\(tuple.id)"
+        
+        guard let url = URL(string: urlString) else {
+            throw ImageDownloadError.badURL
+        }
+        
+        var request = URLRequest(url: url)
+        request.setValue(clientID, forHTTPHeaderField: "Authorization")
+        
+        let (data,response) = try await URLSession.shared.data(for: request)
+        
+        guard (response as? HTTPURLResponse)?.statusCode == 200 else {
+            throw ImageDownloadError.invalidData
+        }
+        
+        //print(String(data: data, encoding: .utf8)!)
+        let model = try parseDetail(data)
+        print(model)
+        let links = try sortDetail(with: model, isAlbum: tuple.isAlbum)
+        print(links)
+    }
+    
+    func sortDetail(with model: DetailModel, isAlbum: Bool) throws -> [String] {
+        var links = [String]()
+        if isAlbum {
+            let items = model.data.images!
+            for item in items {
+                guard let type = ImageType.init(rawValue: item.type) else {
+                    throw ImageDownloadError.invalidData
+                }
+                var newLink = String()
+                switch type {
+                case .mp4, .gif:
+                    newLink = try concatStr(with: item.mp4!)
+                case .jpeg, .png:
+                    newLink = item.link
+                }
+                links.append(newLink)
+            }
+        } else {
+            let item = model.data
+            guard let type = ImageType.init(rawValue: item.type!) else {
+                throw ImageDownloadError.invalidData
+            }
+            var newLink = String()
+            switch type {
+            case .mp4, .gif:
+                newLink = try concatStr(with: item.mp4!)
+            case .jpeg, .png:
+                newLink = item.link
+            }
+            links.append(newLink)
+        }
+        return links
+    }
+    private func parseDetail(_ data: Data) throws -> DetailModel {
+        do {
+            let decodedData = try JSONDecoder().decode(DetailModel.self, from: data)
+            return decodedData
+        } catch {
+            throw error
+        }
+    }
 //MARK: Key for gallery when calling API
     struct GalleryKey {
         let sectionID: Section

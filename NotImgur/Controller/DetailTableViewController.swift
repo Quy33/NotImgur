@@ -11,13 +11,25 @@ class DetailTableViewController: UITableViewController {
     
     static let identifier = "DetailTableView"
     private let cellIdentifier = "detailCell"
+    private let contents = [UIImageView]()
+    private var imgurManager = ImgurNetworkManager()
     
-    var tuple = (id: "vkpV5WE",is_album: true)
+    let image = (id: "Y4vvsE8",isAlbum: false)
+    let album = (id: "vkpV5WE",isAlbum: true)
+    
+    //var tuple = (id: "vkpV5WE",is_album: true)
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //tableView.dataSource = self
+        Task {
+            do {
+                try await imgurManager.getDetail(with: image)
+                try await imgurManager.getDetail(with: album)
+            } catch {
+                print(error)
+            }
+        }
     }
 
     // MARK: - Table view data source
@@ -27,7 +39,7 @@ class DetailTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
         var config = cell.defaultContentConfiguration()
-        config.text = tuple.id
+        config.text = album.id
         cell.contentConfiguration = config
         return cell
     }
