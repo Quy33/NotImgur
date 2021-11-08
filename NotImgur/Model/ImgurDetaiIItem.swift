@@ -7,7 +7,37 @@
 
 import Foundation
 
+protocol ImgurDetailItem {
+    var link: String {get}
+}
 
-struct ImgurDetailItem {
+struct ImageDetailItem : ImgurDetailItem {
+
+    var title: String? = nil
     
+    var description: String? = nil
+    
+    var link: String = ""
+    
+    var animated: Bool = false
+    
+    var mp4: String? = nil
+        
+    var url: String {
+        let newLink = animated ? concatStr(with: mp4!) : link
+        return newLink
+    }
+    private func concatStr(with string: String) -> String {
+        var result = string
+        guard let i = result.lastIndex(of: ".") else {
+            return ""
+        }
+        result.insert("h", at: i)
+        return result
+    }
+}
+struct AlbumDetailItem : ImgurDetailItem {
+    var link: String = ""
+    var title: String = ""
+    var images = [ImageDetailItem]()
 }

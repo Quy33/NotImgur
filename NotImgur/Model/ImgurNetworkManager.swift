@@ -178,7 +178,7 @@ struct ImgurNetworkManager {
     
 //MARK: Detail Screen Networking
     
-    func getDetail(with tuple: (id: String, isAlbum: Bool) ) async throws {
+    func getDetail(with tuple: (id: String, isAlbum: Bool) ) async throws -> DetailModel{
         
         let detail = tuple.isAlbum ? "album" : "image"
         
@@ -199,44 +199,24 @@ struct ImgurNetworkManager {
         
         //print(String(data: data, encoding: .utf8)!)
         let model = try parseDetail(data)
-        print(model)
-        let links = try sortDetail(with: model, isAlbum: tuple.isAlbum)
-        print(links)
+        return model
+    }
+        
+    func getDetailItem(_ model: DetailModel) ->ImgurDetailItem {
+        if let items = model.data.images {
+            var album = AlbumDetailItem(link: model.data.link, title: model.data.title, images: [])
+            
+            for item in items {
+                let newItem = ImageDetailItem(title: item.title, description: item.description, link: item.link, animated: item.animated, mp4: item.mp4)
+                album.images.append(newItem)
+            }
+            return album
+        } else {
+            var image = ImageDetailItem(title: model.data.title, description: model.data.description, link: model.data.link, animated: model.data.animated!, mp4: model.data.mp4)
+            return image
+        }
     }
     
-    func sortDetail(with model: DetailModel, isAlbum: Bool) throws -> [String] {
-        var links = [String]()
-        if isAlbum {
-            let items = model.data.images!
-            for item in items {
-                guard let type = ImageType.init(rawValue: item.type) else {
-                    throw ImageDownloadError.invalidData
-                }
-                var newLink = String()
-                switch type {
-                case .mp4, .gif:
-                    newLink = try concatStr(with: item.mp4!)
-                case .jpeg, .png:
-                    newLink = item.link
-                }
-                links.append(newLink)
-            }
-        } else {
-            let item = model.data
-            guard let type = ImageType.init(rawValue: item.type!) else {
-                throw ImageDownloadError.invalidData
-            }
-            var newLink = String()
-            switch type {
-            case .mp4, .gif:
-                newLink = try concatStr(with: item.mp4!)
-            case .jpeg, .png:
-                newLink = item.link
-            }
-            links.append(newLink)
-        }
-        return links
-    }
     private func parseDetail(_ data: Data) throws -> DetailModel {
         do {
             let decodedData = try JSONDecoder().decode(DetailModel.self, from: data)

@@ -17,6 +17,13 @@ class DetailTableViewController: UITableViewController {
     let image = (id: "Y4vvsE8",isAlbum: false)
     let album = (id: "vkpV5WE",isAlbum: true)
     
+    lazy var item: ImgurDetailItem = {
+        if image.isAlbum {
+            return AlbumDetailItem()
+        } else {
+            return ImageDetailItem()
+        }
+    }()
     //var tuple = (id: "vkpV5WE",is_album: true)
 
     override func viewDidLoad() {
@@ -24,8 +31,10 @@ class DetailTableViewController: UITableViewController {
         
         Task {
             do {
-                try await imgurManager.getDetail(with: image)
-                try await imgurManager.getDetail(with: album)
+                let model = try await imgurManager.getDetail(with: album)
+                //let model = try await imgurManager.getDetail(with: image)
+                item = imgurManager.getDetailItem(model)
+                tableView.reloadData()
             } catch {
                 print(error)
             }
@@ -34,13 +43,22 @@ class DetailTableViewController: UITableViewController {
 
     // MARK: - Table view data source
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        guard let album = item as? AlbumDetailItem else {
+            return 1
+        }
+        return album.images.count
+        //return 1
     }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
         var config = cell.defaultContentConfiguration()
-        config.text = album.id
+        
+        guard let album = item as? AlbumDetailItem else {
+            return cell
+        }
+        config.text = album.title
         cell.contentConfiguration = config
+        
         return cell
     }
 }
