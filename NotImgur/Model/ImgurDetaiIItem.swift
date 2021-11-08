@@ -7,11 +7,7 @@
 
 import Foundation
 
-protocol ImgurDetailItem {
-    var link: String {get}
-}
-
-struct ImageDetailItem : ImgurDetailItem {
+struct ImageDetailItem {
 
     var title: String? = nil
     
@@ -36,7 +32,7 @@ struct ImageDetailItem : ImgurDetailItem {
         return result
     }
 }
-struct AlbumDetailItem : ImgurDetailItem {
+struct AlbumDetailItem {
     var link: String = ""
     var title: String = ""
     var images = [ImageDetailItem]()

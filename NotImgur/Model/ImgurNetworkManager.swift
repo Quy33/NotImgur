@@ -201,21 +201,6 @@ struct ImgurNetworkManager {
         let model = try parseDetail(data)
         return model
     }
-        
-    func getDetailItem(_ model: DetailModel) ->ImgurDetailItem {
-        if let items = model.data.images {
-            var album = AlbumDetailItem(link: model.data.link, title: model.data.title, images: [])
-            
-            for item in items {
-                let newItem = ImageDetailItem(title: item.title, description: item.description, link: item.link, animated: item.animated, mp4: item.mp4)
-                album.images.append(newItem)
-            }
-            return album
-        } else {
-            var image = ImageDetailItem(title: model.data.title, description: model.data.description, link: model.data.link, animated: model.data.animated!, mp4: model.data.mp4)
-            return image
-        }
-    }
     
     private func parseDetail(_ data: Data) throws -> DetailModel {
         do {
