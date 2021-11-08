@@ -11,6 +11,7 @@ class GalleryViewCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView?
     @IBOutlet weak var titleLabel: UILabel?
     @IBOutlet weak var typeLabel: UILabel?
+    @IBOutlet weak var labelStackView: UIStackView?
     
     static let identifier = "GalleryViewCell"
     

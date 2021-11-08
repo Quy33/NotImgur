@@ -24,7 +24,7 @@ class ViewController: UIViewController {
         
         setLayout(collectionView: collectionView)
         
-        imgurManager.configThumbnail = .mediumThumbnail
+        imgurManager.configThumbnail = .smallThumbnail
         initialNetworking()
     }
     
@@ -45,7 +45,6 @@ class ViewController: UIViewController {
                 print(error)
             }
             print("Finished initial setup")
-            check()
         }
     }
         
@@ -201,8 +200,9 @@ extension ViewController: PinterestLayoutDelegate {
         let image = galleryItems[indexPath.row].image
         
         if let cell = collectionView.cellForItem(at: indexPath) as? GalleryViewCell {
-            let label = cell.titleLabel!
-            return image.size.height + label.frame.height
+            let titleLabel = cell.titleLabel!.frame.height
+            let typeLabel = cell.titleLabel!.frame.height
+            return image.size.height + titleLabel + typeLabel
         }
         
         return image.size.height
