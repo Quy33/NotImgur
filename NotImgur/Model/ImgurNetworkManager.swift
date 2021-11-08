@@ -15,7 +15,12 @@ struct ImgurNetworkManager {
     
     private let secret = "de0848f79adcf51b1469d66a475bc590b37c8085"
     
-    private var sizeOfThumbnail: Character = "t"
+    var sizeOfThumbnail: Character {
+        return configThumbnail.rawValue
+    }
+    
+    var configThumbnail: ThumbnailSize = .smallThumbnail
+    
 
 //MARK: Getting Gallery Information
     func requestGallery(section: GalleryKey.Section = .hot, sort: GalleryKey.Sort = .viral, window: GalleryKey.Window = .day, page: Int = 0) async throws -> ImageModel
@@ -124,23 +129,6 @@ struct ImgurNetworkManager {
         } catch {
             print(error)
             return nil
-        }
-    }
-    
-    mutating func thumbnailSize(_ size: ThumbnailSize){
-        switch size {
-        case .smallSquare:
-            sizeOfThumbnail = ThumbnailSize.smallSquare.rawValue
-        case .bigSquare:
-            sizeOfThumbnail = ThumbnailSize.bigSquare.rawValue
-        case .smallThumbnail:
-            sizeOfThumbnail = ThumbnailSize.smallThumbnail.rawValue
-        case .mediumThumbnail:
-            sizeOfThumbnail = ThumbnailSize.mediumThumbnail.rawValue
-        case .largeThumbnail:
-            sizeOfThumbnail = ThumbnailSize.largeThumbnail.rawValue
-        case .hugeThumbnail:
-            sizeOfThumbnail = ThumbnailSize.hugeThumbnail.rawValue
         }
     }
     

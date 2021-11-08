@@ -24,7 +24,7 @@ class ViewController: UIViewController {
         
         setLayout(collectionView: collectionView)
         
-        imgurManager.thumbnailSize(.mediumThumbnail)
+        imgurManager.configThumbnail = .mediumThumbnail
         initialNetworking()
     }
     
