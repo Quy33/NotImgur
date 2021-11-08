@@ -11,9 +11,21 @@ class GalleryViewCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView?
     @IBOutlet weak var titleLabel: UILabel?
     @IBOutlet weak var typeLabel: UILabel?
-    @IBOutlet weak var labelStackView: UIStackView?
     
     static let identifier = "GalleryViewCell"
+    
+    var elementHeights: CGFloat {
+        guard let titleHeight = titleLabel?.frame.height else {
+            return 0
+        }
+        guard let typeHeight = typeLabel?.frame.height else {
+            return 0
+        }
+        let cellStackPadding: CGFloat = 10
+        let labelStackInset: CGFloat = 20
+        let labelStackPadding: CGFloat = 10
+        return titleHeight + typeHeight + cellStackPadding + labelStackPadding + labelStackInset
+    }
     
     func configure(image: UIImage, titleAt: String, typeAt: String){
         imageView?.image = image

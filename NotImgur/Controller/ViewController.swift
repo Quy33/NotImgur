@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     let queryAmount = 60
     private var pageAt = 0
     private var isDoingTask = false
+    private var indexPathToMove = IndexPath()
     var galleryItems = [ImgurGalleryItem](repeating: ImgurGalleryItem(), count: 60)
 
 
@@ -24,7 +25,7 @@ class ViewController: UIViewController {
         
         setLayout(collectionView: collectionView)
         
-        imgurManager.configThumbnail = .smallThumbnail
+        imgurManager.configThumbnail = .mediumThumbnail
         initialNetworking()
     }
     
@@ -192,7 +193,24 @@ extension ViewController: UICollectionViewDataSource {
         return cell
     }
 }
+//MARK: CollectionView Delegate & segue
 extension ViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard !isDoingTask else {
+            print("Busy doing Task")
+            return
+        }
+        
+        indexPathToMove = indexPath
+        
+        performSegue(withIdentifier: DetailTableViewController.identifier, sender: self)
+    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        guard let destination = segue.destination as? DetailTableViewController else {
+            fatalError("Cannot find the destination")
+        }
+        destination.id = galleryItems[indexPathToMove.item].id
+    }
 }
 //MARK: Pinterest Layout Delegate
 extension ViewController: PinterestLayoutDelegate {
@@ -200,9 +218,7 @@ extension ViewController: PinterestLayoutDelegate {
         let image = galleryItems[indexPath.row].image
         
         if let cell = collectionView.cellForItem(at: indexPath) as? GalleryViewCell {
-            let titleLabel = cell.titleLabel!.frame.height
-            let typeLabel = cell.titleLabel!.frame.height
-            return image.size.height + titleLabel + typeLabel
+            return image.size.height + cell.elementHeights
         }
         
         return image.size.height
