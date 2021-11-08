@@ -209,7 +209,8 @@ extension ViewController: UICollectionViewDelegate {
         guard let destination = segue.destination as? DetailTableViewController else {
             fatalError("Cannot find the destination")
         }
-        destination.id = galleryItems[indexPathToMove.item].id
+        destination.tuple.id = galleryItems[indexPathToMove.item].id
+        destination.tuple.is_album = galleryItems[indexPathToMove.item].isAlbum
     }
 }
 //MARK: Pinterest Layout Delegate

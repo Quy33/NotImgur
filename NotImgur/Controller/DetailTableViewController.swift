@@ -12,13 +12,12 @@ class DetailTableViewController: UITableViewController {
     static let identifier = "DetailTableView"
     private let cellIdentifier = "detailCell"
     
-    var id = "KVRunTh"
+    var tuple = (id: "vkpV5WE",is_album: true)
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         //tableView.dataSource = self
-        print(id)
     }
 
     // MARK: - Table view data source
@@ -28,7 +27,7 @@ class DetailTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
         var config = cell.defaultContentConfiguration()
-        config.text = id
+        config.text = tuple.id
         cell.contentConfiguration = config
         return cell
     }

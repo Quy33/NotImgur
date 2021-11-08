@@ -46,6 +46,10 @@ struct ImgurNetworkManager {
         }
         return model
     }
+    
+    func requestDetail(with id: String) {
+        //
+    }
 
 //MARK: Download all Images Thumbnail From Gallery
     
