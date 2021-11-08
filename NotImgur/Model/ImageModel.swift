@@ -13,6 +13,7 @@ struct ImageModel: Decodable {
 struct SingleImage: Decodable {
     let id: String
     let link: String
+    let title: String
     let type: String?
     let mp4: String?
     let gifv: String?

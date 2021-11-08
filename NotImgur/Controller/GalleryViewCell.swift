@@ -10,13 +10,23 @@ import UIKit
 class GalleryViewCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView?
     @IBOutlet weak var titleLabel: UILabel?
-    @IBOutlet weak var typeLabel: UILabel!
+    @IBOutlet weak var typeLabel: UILabel?
     
     static let identifier = "GalleryViewCell"
     
     func configure(image: UIImage, titleAt: String, typeAt: String){
         imageView?.image = image
         titleLabel?.text = titleAt
-        typeLabel?.text = typeAt
+        let type = ImgurNetworkManager.ImageType(rawValue: typeAt)
+        switch type {
+        case .mp4:
+            typeLabel?.text = "MP4"
+        case .gif:
+            typeLabel?.text = "GIF"
+        case .jpeg, .png:
+            typeLabel?.text = "IMG"
+        default:
+            typeLabel?.text = "???"
+        }
     }
 }

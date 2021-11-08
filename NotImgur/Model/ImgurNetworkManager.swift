@@ -14,6 +14,8 @@ struct ImgurNetworkManager {
     private let clientID = "Client-ID 11dd115895de7c5"
     
     private let secret = "de0848f79adcf51b1469d66a475bc590b37c8085"
+    
+    private var sizeOfThumbnail: Character = "t"
 
 //MARK: Getting Gallery Information
     func requestGallery(section: GalleryKey.Section = .hot, sort: GalleryKey.Sort = .viral, window: GalleryKey.Window = .day, page: Int = 0) async throws -> ImageModel
@@ -81,6 +83,8 @@ struct ImgurNetworkManager {
         for i in 0..<model.data.count {
             items[i].id = model.data[i].id
             items[i].isAlbum = model.data[i].is_album
+            items[i].type = model.data[i].type ?? model.data[i].images![0].type
+            items[i].title = model.data[i].title
         }
     }
      
@@ -109,7 +113,7 @@ struct ImgurNetworkManager {
         guard let i = result.lastIndex(of: ".") else {
             throw ImageDownloadError.badURL
         }
-        result.insert("m", at: i)
+        result.insert(sizeOfThumbnail, at: i)
         return result
     }
     
@@ -122,7 +126,25 @@ struct ImgurNetworkManager {
             return nil
         }
     }
-    func sortingType(with obj: SingleImage) throws -> String {
+    
+    mutating func thumbnailSize(_ size: ThumbnailSize){
+        switch size {
+        case .smallSquare:
+            sizeOfThumbnail = ThumbnailSize.smallSquare.rawValue
+        case .bigSquare:
+            sizeOfThumbnail = ThumbnailSize.bigSquare.rawValue
+        case .smallThumbnail:
+            sizeOfThumbnail = ThumbnailSize.smallThumbnail.rawValue
+        case .mediumThumbnail:
+            sizeOfThumbnail = ThumbnailSize.mediumThumbnail.rawValue
+        case .largeThumbnail:
+            sizeOfThumbnail = ThumbnailSize.largeThumbnail.rawValue
+        case .hugeThumbnail:
+            sizeOfThumbnail = ThumbnailSize.hugeThumbnail.rawValue
+        }
+    }
+    
+    private func sortingType(with obj: SingleImage) throws -> String {
         var link = ""
         //Can safely force unwrap images
         if obj.is_album {
@@ -138,6 +160,8 @@ struct ImgurNetworkManager {
                     link = firstImg.mp4!
                 case .gif:
                     link = firstImg.gifv!
+                default:
+                    throw ImageDownloadError.badURL
                 }
             } else {
                 link = firstImg.link
@@ -152,6 +176,8 @@ struct ImgurNetworkManager {
                     link = obj.mp4!
                 case .gif:
                     link = obj.gifv!
+                default:
+                    throw ImageDownloadError.badURL
                 }
             } else {
                 link = obj.link
@@ -206,5 +232,15 @@ struct ImgurNetworkManager {
     enum ImageType: String {
         case mp4 = "video/mp4"
         case gif = "image/gif"
+        case png = "image/png"
+        case jpeg = "image/jpeg"
+    }
+    enum ThumbnailSize: Character {
+        case smallSquare = "s"
+        case bigSquare = "b"
+        case smallThumbnail = "t"
+        case mediumThumbnail = "m"
+        case largeThumbnail = "l"
+        case hugeThumbnail = "h"
     }
 }

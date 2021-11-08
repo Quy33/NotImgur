@@ -24,6 +24,7 @@ class ViewController: UIViewController {
         
         setLayout(collectionView: collectionView)
         
+        imgurManager.thumbnailSize(.mediumThumbnail)
         initialNetworking()
     }
     
@@ -44,6 +45,7 @@ class ViewController: UIViewController {
                 print(error)
             }
             print("Finished initial setup")
+            check()
         }
     }
         
@@ -124,7 +126,13 @@ class ViewController: UIViewController {
         var items = [ImgurGalleryItem]()
         
         for i in 0..<model.data.count {
-            let newItem = ImgurGalleryItem(id: model.data[i].id, is_album: model.data[i].is_album, image: try await images[i])
+            let newItem = ImgurGalleryItem(
+                id: model.data[i].id,
+                is_album: model.data[i].is_album,
+                image: try await images[i],
+                type: model.data[i].type ?? model.data[i].images![0].type,
+                title: model.data[i].title
+            )
             items.append(newItem)
         }
         
@@ -141,7 +149,7 @@ class ViewController: UIViewController {
     
     func check() {
         for item in galleryItems {
-            print(item.id)
+            print(item.type)
         }
         print(galleryItems.count)
     }
@@ -179,8 +187,8 @@ extension ViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GalleryViewCell.identifier, for: indexPath) as! GalleryViewCell
         let image = galleryItems[indexPath.row].image
-        let testTitle = "af;afjdaskfjasklfjakldfjad;fajsfk;akdjf;ajfasdkl;fajsdf;adaslfajdfjklas;dfjklasdjfjkasdfjklajsfjklasdf;ajksdfjklasdfjaksdfj;laksfjaskl;dfajsfdasdf;aksdfas;fjadfjlkajfaljdkjfjkdjkafl;asdjkl;fjkadkflajkdfkasdjkfa;dfadfjf;afadf"
-        let testType = "IMG"
+        let testTitle = galleryItems[indexPath.row].title
+        let testType = galleryItems[indexPath.row].type
         cell.configure(image: image,titleAt: testTitle, typeAt: testType)
         return cell
     }
