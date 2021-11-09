@@ -23,7 +23,7 @@ struct ImageDetailItem {
     var image: UIImage
         
     var url: URL? {
-        let newLink = animated ? concatStr(with: mp4!) : link
+        let newLink = animated ? concatStr(with: mp4!) : concatStr(with: link)
         return URL(string: newLink)
     }
     private func concatStr(with string: String) -> String {

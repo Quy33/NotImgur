@@ -20,9 +20,9 @@ class DetailTableViewController: UITableViewController {
     private var image = ImageDetailItem()
     private var height = [CGFloat]()
     
-    var itemGot = (id: "y7ipPF0",isAlbum: true)
-    //var itemGot = (id: "Y4vvsE8",isAlbum: false)
-    //var itemGot = (id: "vkpV5WE",isAlbum: true)
+    //var itemGot = (id: "y7ipPF0",isAlbum: true)
+    //var itemGot = (id: "RyCfJtf",isAlbum: false)
+    var itemGot = (id: "8ZWZTwB",isAlbum: true)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,17 +41,18 @@ class DetailTableViewController: UITableViewController {
                     let images = try await imgurManager.multipleDownload(with: urls)
                     for i in 0..<album.images.count {
                         album.images[i].image = images[i]
-//                        print(i)
-//                        print(album.images[i].title)
-//                        print(album.images[i].description)
+                        print(album.images[i].image)
+                        print(i)
+                        print(album.images[i].title)
+                        print(album.images[i].description)
                     }
-//                    print(album.title)
-//                    print(album.description)
+                    print(album.title)
+                    print(album.description)
                 } else {
                     image = ImageDetailItem(title: model.data.title, description: model.data.description, link: model.data.link, animated: model.data.animated!, mp4: model.data.mp4)
                     image.image = try await imgurManager.singleDownload(with: image.url!)
-//                    print(image.title)
-//                    print(image.description)
+                    print(image.title)
+                    print(image.description)
                 }
                 tableView.reloadData()
             } catch {
@@ -100,12 +101,17 @@ class DetailTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: DetailCell.identifier, for: indexPath) as! DetailCell
         if itemGot.isAlbum {
             let albumItem = album.images[indexPath.row]
-            cell.config(image: albumItem.image, title: album.title, desc: albumItem.description)
+            
+            let albumDesc = album.description
+            let albumItemDesc = albumItem.description
+            let description = albumDesc != nil ? albumDesc : albumItemDesc
+            
+            cell.config(image: albumItem.image, title: album.title, desc: description, height: calculateHeight(albumItem.image.size))
         } else {
             let imageHeight = calculateHeight(image.image.size)
-            cell.config(image: image.image, title: image.title, desc: image.description)
-            print(imageHeight)
+            cell.config(image: image.image, title: image.title, desc: image.description, height: calculateHeight(image.image.size))
         }
+        
         height.append(cell.frame.height)
         return cell
     }
@@ -116,8 +122,8 @@ class DetailTableViewController: UITableViewController {
             return placeHolderImg.size.height
         }
         
-        //return calculateHeight(image.image.size) + height[indexPath.row]
-        return height[indexPath.row]
+        //return height[indexPath.row]
+        return 800
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if itemGot.isAlbum {
@@ -133,7 +139,6 @@ class DetailTableViewController: UITableViewController {
                 guard let url = URL(string: image.mp4!) else { return }
                 playVideo(url: url)
             }
-            
         }
     }
 }
