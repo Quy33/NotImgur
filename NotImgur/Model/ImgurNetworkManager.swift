@@ -28,10 +28,15 @@ struct ImgurNetworkManager {
         //Filling the URL for when calling the API
         let gallery = GalleryKey(sectionID: section, sortID: sort, windowID: window)
         //Making the URL
-        guard let urlComponents = URLComponents(string: "\(baseURL)/gallery/\(gallery.section)/\(gallery.sort)/\(gallery.window)/\(page)")
+        guard var urlComponents = URLComponents(string: "\(baseURL)/gallery/\(gallery.section)/\(gallery.sort)/\(gallery.window)/\(page)")
         else {
             throw ImageDownloadError.invalidData
         }
+        
+//        urlComponents.queryItems = [
+//            URLQueryItem(name: "mature", value: "false")
+//        ]
+        
         var request = URLRequest(url: urlComponents.url!)
         request.setValue(clientID, forHTTPHeaderField: "Authorization")
         

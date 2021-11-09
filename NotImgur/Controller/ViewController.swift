@@ -97,7 +97,7 @@ class ViewController: UIViewController {
             }
         }
 
-    //MARK: download Functions
+//MARK: download Functions
     func performDownloads(count: Int, page: Int) async throws {
         let model = try await imgurManager.requestGallery(page: page)
         

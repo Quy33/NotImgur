@@ -42,7 +42,7 @@ class PinterestLayout: UICollectionViewLayout {
         // Making columns equal to the amount of column set.
         let columnWidth = contentWidth / CGFloat(numberOfColumns)
         //X & Y to get a reference of where each content is inside each column.
-        var xOffSets = [CGFloat]()
+        var xOffSets: [CGFloat] = []
         //Cuz of the CollectionView is static so we can immediately populate the column.
         for column in 0..<numberOfColumns {
             xOffSets.append(CGFloat(column) * columnWidth)
