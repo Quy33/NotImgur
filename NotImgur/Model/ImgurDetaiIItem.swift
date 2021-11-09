@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-struct ImageDetailItem {
+class ImageDetailItem {
 
     var title: String?
     
@@ -34,21 +34,11 @@ struct ImageDetailItem {
         result.insert("m", at: i)
         return result
     }
-    init() {
-        title = nil
-        description = nil
-        link = ""
-        animated = false
-        mp4 = nil
-        image = UIImage(named: "placeholder")!
+    convenience init() {
+        self.init(title: nil)
     }
-    init(title: String) {
-        self.title = title
-        description = nil
-        link = ""
-        animated = false
-        mp4 = nil
-        image = UIImage(named: "placeholder")!
+    convenience init(title: String?) {
+        self.init(title: title, description: nil, link: "", animated: false, mp4: nil)
     }
     init(title: String?, description: String?, link: String, animated: Bool, mp4: String?, image : UIImage = UIImage(named: "placeholder")!) {
         self.title = title

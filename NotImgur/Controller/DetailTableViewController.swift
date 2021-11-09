@@ -62,8 +62,8 @@ class DetailTableViewController: UITableViewController {
     
     func getAlbumDetail(_ model: DetailModel) -> AlbumDetailItem {
         var newAlbum = AlbumDetailItem(title: model.data.title, description: model.data.description, images: [])
-        let item = model.data.images!
-        for image in item {
+        let items = model.data.images!
+        for image in items {
             let newImage = ImageDetailItem(title: image.title, description: image.description, link: image.link, animated: image.animated, mp4: image.mp4)
             newAlbum.images.append(newImage)
         }
