@@ -26,7 +26,7 @@ class DetailCell: UITableViewCell {
         cellImage?.image = image
         imageFrame?.frame.size.height = height
         if title == nil {
-            titleLabel?.isHidden = false
+            titleLabel?.isHidden = true
         } else {
             titleLabel?.text = title
         }

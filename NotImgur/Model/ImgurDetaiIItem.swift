@@ -42,6 +42,14 @@ struct ImageDetailItem {
         mp4 = nil
         image = UIImage(named: "placeholder")!
     }
+    init(title: String) {
+        self.title = title
+        description = nil
+        link = ""
+        animated = false
+        mp4 = nil
+        image = UIImage(named: "placeholder")!
+    }
     init(title: String?, description: String?, link: String, animated: Bool, mp4: String?, image : UIImage = UIImage(named: "placeholder")!) {
         self.title = title
         self.description = description
@@ -52,7 +60,17 @@ struct ImageDetailItem {
     }
 }
 struct AlbumDetailItem {
-    var title = ""
+    var title : String
     var description: String?
-    var images = [ImageDetailItem]()
+    var images : [ImageDetailItem]
+    init() {
+        title = ""
+        description = nil
+        images = [ImageDetailItem()]
+    }
+    init(title: String, description: String?, images: [ImageDetailItem]) {
+        self.title = title
+        self.description = description
+        self.images = images
+    }
 }

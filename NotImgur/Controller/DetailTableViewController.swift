@@ -17,12 +17,12 @@ class DetailTableViewController: UITableViewController {
     private var imgurManager = ImgurNetworkManager()
     
     private var album = AlbumDetailItem()
-    private var image = ImageDetailItem()
+    private var image = ImageDetailItem(title: "Place Holder")
     private var height = [CGFloat]()
     
     //var itemGot = (id: "y7ipPF0",isAlbum: true)
     //var itemGot = (id: "RyCfJtf",isAlbum: false)
-    var itemGot = (id: "8ZWZTwB",isAlbum: true)
+    var itemGot = (id: "4NfPaoN",isAlbum: true)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,7 +33,7 @@ class DetailTableViewController: UITableViewController {
         Task {
             do {
                 let model = try await imgurManager.getDetail(with: itemGot)
-                
+
                 if itemGot.isAlbum {
                     album = getAlbumDetail(model)
                     let urls = album.images.compactMap { $0.url }
@@ -41,7 +41,6 @@ class DetailTableViewController: UITableViewController {
                     let images = try await imgurManager.multipleDownload(with: urls)
                     for i in 0..<album.images.count {
                         album.images[i].image = images[i]
-                        print(album.images[i].image)
                         print(i)
                         print(album.images[i].title)
                         print(album.images[i].description)
@@ -106,10 +105,16 @@ class DetailTableViewController: UITableViewController {
             let albumItemDesc = albumItem.description
             let description = albumDesc != nil ? albumDesc : albumItemDesc
             
-            cell.config(image: albumItem.image, title: album.title, desc: description, height: calculateHeight(albumItem.image.size))
+            var title : String?
+            if indexPath.row == 0 {
+                title = album.title
+            } else { title = album.images[indexPath.row].title }
+            
+            let imageHeight = calculateHeight(albumItem.image.size)
+            cell.config(image: albumItem.image, title: title, desc: description, height: calculateHeight(albumItem.image.size))
         } else {
             let imageHeight = calculateHeight(image.image.size)
-            cell.config(image: image.image, title: image.title, desc: image.description, height: calculateHeight(image.image.size))
+            cell.config(image: image.image, title: image.title, desc: image.description, height: imageHeight)
         }
         
         height.append(cell.frame.height)
@@ -122,8 +127,7 @@ class DetailTableViewController: UITableViewController {
             return placeHolderImg.size.height
         }
         
-        //return height[indexPath.row]
-        return 800
+        return height[indexPath.row]
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if itemGot.isAlbum {
