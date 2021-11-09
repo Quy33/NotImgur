@@ -17,18 +17,18 @@ class DetailTableViewController: UITableViewController {
     private var imgurManager = ImgurNetworkManager()
     
     private var album = AlbumDetailItem()
-    private var image = ImageDetailItem(title: "Place Holder")
+    private var image = ImageDetailItem(title: "Place Holder", description: "Place Holder")
     private var height = [CGFloat]()
     
-    //var itemGot = (id: "y7ipPF0",isAlbum: true)
+    var itemGot = (id: "y7ipPF0",isAlbum: true)
     //var itemGot = (id: "RyCfJtf",isAlbum: false)
-    var itemGot = (id: "4NfPaoN",isAlbum: true)
+    //var itemGot = (id: "4NfPaoN",isAlbum: true)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         tableView.register(UINib(nibName: DetailCell.identifier, bundle: nil), forCellReuseIdentifier: DetailCell.identifier)
-        print(itemGot)
+        //print(itemGot)
         
         Task {
             do {
@@ -41,17 +41,10 @@ class DetailTableViewController: UITableViewController {
                     let images = try await imgurManager.multipleDownload(with: urls)
                     for i in 0..<album.images.count {
                         album.images[i].image = images[i]
-                        print(i)
-                        print(album.images[i].title)
-                        print(album.images[i].description)
                     }
-                    print(album.title)
-                    print(album.description)
                 } else {
                     image = ImageDetailItem(title: model.data.title, description: model.data.description, link: model.data.link, animated: model.data.animated!, mp4: model.data.mp4)
                     image.image = try await imgurManager.singleDownload(with: image.url!)
-                    print(image.title)
-                    print(image.description)
                 }
                 tableView.reloadData()
             } catch {
@@ -110,11 +103,9 @@ class DetailTableViewController: UITableViewController {
                 title = album.title
             } else { title = album.images[indexPath.row].title }
             
-            let imageHeight = calculateHeight(albumItem.image.size)
             cell.config(image: albumItem.image, title: title, desc: description, height: calculateHeight(albumItem.image.size))
         } else {
-            let imageHeight = calculateHeight(image.image.size)
-            cell.config(image: image.image, title: image.title, desc: image.description, height: imageHeight)
+            cell.config(image: image.image, title: image.title, desc: image.description, height: calculateHeight(image.image.size))
         }
         
         height.append(cell.frame.height)

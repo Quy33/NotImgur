@@ -35,10 +35,10 @@ class ImageDetailItem {
         return result
     }
     convenience init() {
-        self.init(title: nil)
+        self.init(title: "", description: "")
     }
-    convenience init(title: String?) {
-        self.init(title: title, description: nil, link: "", animated: false, mp4: nil)
+    convenience init(title: String, description: String) {
+        self.init(title: title, description: description, link: "", animated: false, mp4: nil)
     }
     init(title: String?, description: String?, link: String, animated: Bool, mp4: String?, image : UIImage = UIImage(named: "placeholder")!) {
         self.title = title
