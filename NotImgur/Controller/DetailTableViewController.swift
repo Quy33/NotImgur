@@ -12,45 +12,48 @@ import AVFoundation
 class DetailTableViewController: UITableViewController {
     
     static let identifier = "DetailTableView"
-    private let cellIdentifier = "detailCell"
+    private let cellIdentifier = "DetailCell"
     private let contents = [UIImageView]()
     private var imgurManager = ImgurNetworkManager()
     
-    //private var image = ImageDetailItem()
     private var album = AlbumDetailItem()
-    private var cellHeight = [CGFloat]()
+    private var image = ImageDetailItem()
+    private var height = [CGFloat]()
     
-    private var image = ImageDetailItem(title: "Test Title", description: "nil", link: "", animated: false, mp4: nil)
-    
-    var itemGot = (id: "Y4vvsE8",isAlbum: false)
+    var itemGot = (id: "y7ipPF0",isAlbum: true)
+    //var itemGot = (id: "Y4vvsE8",isAlbum: false)
     //var itemGot = (id: "vkpV5WE",isAlbum: true)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         tableView.register(UINib(nibName: DetailCell.identifier, bundle: nil), forCellReuseIdentifier: DetailCell.identifier)
+        print(itemGot)
         
         Task {
             do {
-                //let model = try await imgurManager.getDetail(with: itemGot)
+                let model = try await imgurManager.getDetail(with: itemGot)
                 
                 if itemGot.isAlbum {
-//                    album = getAlbumDetail(model)
-//                    let urls = album.images.compactMap { $0.url }
-//
-//                    let images = try await imgurManager.multipleDownload(with: urls)
+                    album = getAlbumDetail(model)
+                    let urls = album.images.compactMap { $0.url }
+
+                    let images = try await imgurManager.multipleDownload(with: urls)
                     for i in 0..<album.images.count {
-//                        album.images[i].image = images[i]
-                        print(album.images[i].title)
-                        print(album.images[i].description)
+                        album.images[i].image = images[i]
+//                        print(i)
+//                        print(album.images[i].title)
+//                        print(album.images[i].description)
                     }
+//                    print(album.title)
+//                    print(album.description)
                 } else {
-//                    image = ImageDetailItem(title: model.data.title, description: model.data.description, link: model.data.link, animated: model.data.animated!, mp4: model.data.mp4)
-//                    image.image = try await imgurManager.singleDownload(with: image.url!)
-                    print(image.title)
-                    print(image.description)
+                    image = ImageDetailItem(title: model.data.title, description: model.data.description, link: model.data.link, animated: model.data.animated!, mp4: model.data.mp4)
+                    image.image = try await imgurManager.singleDownload(with: image.url!)
+//                    print(image.title)
+//                    print(image.description)
                 }
-                //tableView.reloadData()
+                tableView.reloadData()
             } catch {
                 print(error)
             }
@@ -58,7 +61,7 @@ class DetailTableViewController: UITableViewController {
     }
     
     func getAlbumDetail(_ model: DetailModel) -> AlbumDetailItem {
-        var newAlbum = AlbumDetailItem(title: model.data.title, images: [])
+        var newAlbum = AlbumDetailItem(title: model.data.title, description: model.data.description, images: [])
         let item = model.data.images!
         for image in item {
             let newImage = ImageDetailItem(title: image.title, description: image.description, link: image.link, animated: image.animated, mp4: image.mp4)
@@ -87,26 +90,34 @@ class DetailTableViewController: UITableViewController {
 // MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+        if itemGot.isAlbum {
+            return album.images.count
+        } else {
+            return 1
+        }
     }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: DetailCell.identifier, for: indexPath) as! DetailCell
         if itemGot.isAlbum {
             let albumItem = album.images[indexPath.row]
-            cell.config(image: albumItem.image, title: albumItem.title, desc: albumItem.description)
+            cell.config(image: albumItem.image, title: album.title, desc: albumItem.description)
         } else {
+            let imageHeight = calculateHeight(image.image.size)
             cell.config(image: image.image, title: image.title, desc: image.description)
+            print(imageHeight)
         }
+        height.append(cell.frame.height)
         return cell
     }
 //MARK: TableView Delegate Method
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let placeHolderImg = UIImage(named: "placeholder")!
+        guard !height.isEmpty else {
+            return placeHolderImg.size.height
+        }
         
-        let cell = DetailCell()
-        cell.config(image: UIImage(named: "placeholder")!, title: image.title, desc: image.description)
-        
-        let height = cell.getCellHeight()
-        return calculateHeight(image.image.size) + height
+        //return calculateHeight(image.image.size) + height[indexPath.row]
+        return height[indexPath.row]
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if itemGot.isAlbum {

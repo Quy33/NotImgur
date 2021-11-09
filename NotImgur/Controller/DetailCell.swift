@@ -12,7 +12,7 @@ class DetailCell: UITableViewCell {
     @IBOutlet weak var cellImage: UIImageView?
     @IBOutlet weak var titleLabel: UILabel?
     @IBOutlet weak var descriptionLabel: UILabel?
-    @IBOutlet weak var detailStack: UIStackView?
+
     
     static let identifier = "DetailCell"
 
@@ -35,9 +35,9 @@ class DetailCell: UITableViewCell {
         }
     }
     func getCellHeight() -> CGFloat {
-        let titleHeight = titleLabel != nil ? titleLabel!.frame.height : 0
-        let descHeight = descriptionLabel != nil ? descriptionLabel!.frame.height : 0
-        let result = titleHeight + descHeight
+        let titleHeight = titleLabel?.frame.height ?? 0
+        let descHeight = descriptionLabel?.frame.height ?? 0
+        let result = titleHeight + descHeight 
         return result
     }
 

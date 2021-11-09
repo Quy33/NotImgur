@@ -31,7 +31,7 @@ struct ImageDetailItem {
         guard let i = result.lastIndex(of: ".") else {
             return ""
         }
-        result.insert("h", at: i)
+        result.insert("m", at: i)
         return result
     }
     init() {
@@ -52,6 +52,7 @@ struct ImageDetailItem {
     }
 }
 struct AlbumDetailItem {
-    var title: String = ""
+    var title = ""
+    var description: String?
     var images = [ImageDetailItem]()
 }
