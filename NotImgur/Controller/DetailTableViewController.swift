@@ -16,8 +16,11 @@ class DetailTableViewController: UITableViewController {
     private let contents = [UIImageView]()
     private var imgurManager = ImgurNetworkManager()
     
-    private var image = ImageDetailItem()
+    //private var image = ImageDetailItem()
     private var album = AlbumDetailItem()
+    private var cellHeight = [CGFloat]()
+    
+    private var image = ImageDetailItem(title: "Test Title", description: "nil", link: "", animated: false, mp4: nil)
     
     var itemGot = (id: "Y4vvsE8",isAlbum: false)
     //var itemGot = (id: "vkpV5WE",isAlbum: true)
@@ -29,7 +32,7 @@ class DetailTableViewController: UITableViewController {
         
         Task {
             do {
-                let model = try await imgurManager.getDetail(with: itemGot)
+                //let model = try await imgurManager.getDetail(with: itemGot)
                 
                 if itemGot.isAlbum {
 //                    album = getAlbumDetail(model)
@@ -47,7 +50,7 @@ class DetailTableViewController: UITableViewController {
                     print(image.title)
                     print(image.description)
                 }
-                tableView.reloadData()
+                //tableView.reloadData()
             } catch {
                 print(error)
             }
@@ -81,23 +84,29 @@ class DetailTableViewController: UITableViewController {
             vc.player?.play()
         }
     }
-    // MARK: - Table view data source
+// MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return 2
     }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: DetailCell.identifier, for: indexPath) as! DetailCell
         if itemGot.isAlbum {
-            cell.config(image: album.images[indexPath.row].image)
+            let albumItem = album.images[indexPath.row]
+            cell.config(image: albumItem.image, title: albumItem.title, desc: albumItem.description)
         } else {
-            cell.config(image: image.image)
+            cell.config(image: image.image, title: image.title, desc: image.description)
         }
         return cell
     }
 //MARK: TableView Delegate Method
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return calculateHeight(image.image.size)
+        
+        let cell = DetailCell()
+        cell.config(image: UIImage(named: "placeholder")!, title: image.title, desc: image.description)
+        
+        let height = cell.getCellHeight()
+        return calculateHeight(image.image.size) + height
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if itemGot.isAlbum {
