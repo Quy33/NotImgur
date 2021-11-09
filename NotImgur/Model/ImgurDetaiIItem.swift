@@ -6,22 +6,25 @@
 //
 
 import Foundation
+import UIKit
 
 struct ImageDetailItem {
 
-    var title: String? = nil
+    var title: String?
     
-    var description: String? = nil
+    var description: String?
     
-    var link: String = ""
+    var link: String
     
-    var animated: Bool = false
+    var animated: Bool
     
-    var mp4: String? = nil
+    var mp4: String?
+    
+    var image: UIImage
         
-    var url: String {
+    var url: URL? {
         let newLink = animated ? concatStr(with: mp4!) : link
-        return newLink
+        return URL(string: newLink)
     }
     private func concatStr(with string: String) -> String {
         var result = string
@@ -31,9 +34,24 @@ struct ImageDetailItem {
         result.insert("h", at: i)
         return result
     }
+    init() {
+        title = nil
+        description = nil
+        link = ""
+        animated = false
+        mp4 = nil
+        image = UIImage(named: "placeholder")!
+    }
+    init(title: String?, description: String?, link: String, animated: Bool, mp4: String?, image : UIImage = UIImage(named: "placeholder")!) {
+        self.title = title
+        self.description = description
+        self.link = link
+        self.animated = animated
+        self.mp4 = mp4
+        self.image = image
+    }
 }
 struct AlbumDetailItem {
-    var link: String = ""
     var title: String = ""
     var images = [ImageDetailItem]()
 }

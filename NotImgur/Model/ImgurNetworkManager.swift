@@ -75,7 +75,6 @@ struct ImgurNetworkManager {
                     }
                 }
             }
-            
             var results = [UIImage]()
             for await result in group {
                 results.append(result)
