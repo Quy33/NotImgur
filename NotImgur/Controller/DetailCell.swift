@@ -36,13 +36,6 @@ class DetailCell: UITableViewCell {
             descriptionLabel?.text = desc
         }
     }
-    func getCellHeight() -> CGFloat {
-        let titleHeight = titleLabel?.frame.height ?? 0
-        let descHeight = descriptionLabel?.frame.height ?? 0
-        let result = titleHeight + descHeight 
-        return result
-    }
-
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
 

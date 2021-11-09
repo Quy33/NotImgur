@@ -9,12 +9,12 @@ import UIKit
 
 class ViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
-    var imgurManager = ImgurNetworkManager()
-    let queryAmount = 60
+    private var imgurManager = ImgurNetworkManager()
+    private let queryAmount = 60
     private var pageAt = 0
     private var isDoingTask = false
     private var indexPathToMove = IndexPath()
-    var galleryItems = [ImgurGalleryItem](repeating: ImgurGalleryItem(), count: 60)
+    private var galleryItems = [ImgurGalleryItem](repeating: ImgurGalleryItem(), count: 60)
 
 
     override func viewDidLoad() {
@@ -143,34 +143,28 @@ class ViewController: UIViewController {
         }
     }
     
-    func makePlaceHolders(count: Int) -> [ImgurGalleryItem] {
+    private func makePlaceHolders(count: Int) -> [ImgurGalleryItem] {
         return [ImgurGalleryItem](repeating: ImgurGalleryItem(), count: count)
     }
     
-    func check() {
-//        for item in galleryItems {
-//            print(item.type)
-//        }
-//        print(galleryItems.count)
-    }
     
 //MARK: Function to update & reset the collectionView
-    func update(collectionView: UICollectionView, updateItemAt indexPath: IndexPath){
+    private func update(collectionView: UICollectionView, updateItemAt indexPath: IndexPath){
         reload(collectionView: collectionView)
         collectionView.reloadItems(at: [indexPath])
     }
-    func reload(collectionView: UICollectionView){
+    private func reload(collectionView: UICollectionView){
         let contentOffset = collectionView.contentOffset
         
         setLayout(collectionView: collectionView)
         
         collectionView.setContentOffset(contentOffset, animated: false)
     }
-    func reset(collectionView: UICollectionView){
+    private func reset(collectionView: UICollectionView){
         setLayout(collectionView: collectionView)
         collectionView.setContentOffset(CGPoint.zero, animated: false)
     }
-    func setLayout(collectionView: UICollectionView) {
+    private func setLayout(collectionView: UICollectionView) {
         let layout = PinterestLayout()
         layout.delegate = self
         //collectionView.collectionViewLayout.invalidateLayout()

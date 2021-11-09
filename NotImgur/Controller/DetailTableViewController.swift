@@ -12,7 +12,6 @@ import AVFoundation
 class DetailTableViewController: UITableViewController {
     
     static let identifier = "DetailTableView"
-    private let cellIdentifier = "DetailCell"
     private let contents = [UIImageView]()
     private var imgurManager = ImgurNetworkManager()
     
@@ -53,7 +52,7 @@ class DetailTableViewController: UITableViewController {
         }
     }
     
-    func getAlbumDetail(_ model: DetailModel) -> AlbumDetailItem {
+    private func getAlbumDetail(_ model: DetailModel) -> AlbumDetailItem {
         var newAlbum = AlbumDetailItem(title: model.data.title, description: model.data.description, images: [])
         let items = model.data.images!
         for image in items {
@@ -62,7 +61,7 @@ class DetailTableViewController: UITableViewController {
         }
         return newAlbum
     }
-    func calculateHeight(_ pictureSize: CGSize)->CGFloat{
+    private func calculateHeight(_ pictureSize: CGSize)->CGFloat{
         let deviceSize = view.frame.size
         let wOffSet = pictureSize.width - deviceSize.width
         let wOffSetPercent = (wOffSet*100)/pictureSize.width
@@ -70,7 +69,7 @@ class DetailTableViewController: UITableViewController {
         let newHeight = pictureSize.height - hOffSet
         return newHeight
     }
-    func playVideo(url: URL) {
+    private func playVideo(url: URL) {
         let player = AVPlayer(url: url)
         
         let vc = AVPlayerViewController()
