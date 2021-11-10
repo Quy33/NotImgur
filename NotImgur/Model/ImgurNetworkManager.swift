@@ -15,6 +15,8 @@ struct ImgurNetworkManager {
     
     private let secret = "de0848f79adcf51b1469d66a475bc590b37c8085"
     
+    static var cancellation = false
+    
     var sizeOfThumbnail: Character {
         return configThumbnail.rawValue
     }
@@ -68,24 +70,29 @@ struct ImgurNetworkManager {
         }
         return image
     }
+
     func multipleDownload(with links: [URL]) async throws -> [UIImage] {
-        return await withTaskGroup(of: UIImage.self, body: { group in
-            for link in links {
+        let unOrderedImages = try await withThrowingTaskGroup(of: (index: Int, image: UIImage).self, body: { group -> [(index: Int, image: UIImage)] in
+            for (index,link) in links.enumerated() {
                 group.addTask {
-                    do {
-                        let image = try await singleDownload(with: link)
-                        return image
-                    } catch {
-                        return UIImage(named: "placeholder")!
-                    }
+                    let image = try await singleDownload(with: link)
+                    return (index: index,image: image)
                 }
             }
-            var results = [UIImage]()
-            for await result in group {
+//            guard !ImgurNetworkManager.cancellation else {
+//                throw ImageDownloadError.cancelDownloading
+//            }
+            var results: [(index: Int, image: UIImage)] = []
+            for try await result in group {
                 results.append(result)
             }
+            print("Finish Tasks")
             return results
         })
+        
+        let images = unOrderedImages.sorted { $0.index < $1.index }.map { $0.image }
+        
+        return images
     }
 
 //MARK: Updating Gallery Item model to move to detail screen and then to be use for API Call
@@ -101,14 +108,8 @@ struct ImgurNetworkManager {
 //MARK: Misc Function
     func getLinks(from model: GalleryModel) throws -> [URL] {
         let links = try getImgLink(with: model)
-        var urls = [URL]()
         //Check links
-        for link in links {
-            guard let url = URL(string: link) else {
-                throw ImageDownloadError.badImage
-            }
-            urls.append(url)
-        }
+        let urls = links.compactMap{ URL(string: $0) }
         return urls
     }
     private func getImgLink(with model: GalleryModel) throws ->[String]{
@@ -255,6 +256,7 @@ struct ImgurNetworkManager {
         case badImage
         case errorDownloading
         case badURL
+        case cancelDownloading
     }
     //MARK: Gallery image Type enum
     enum ImageType: String {

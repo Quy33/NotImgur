@@ -26,7 +26,7 @@ class ViewController: UIViewController {
         setLayout(collectionView: collectionView)
         
         imgurManager.configThumbnail = .mediumThumbnail
-        initialNetworking()
+        //initialNetworking()
     }
     
     func initialNetworking() {
@@ -72,29 +72,30 @@ class ViewController: UIViewController {
         }
 
         @IBAction func reloadPressed(_ sender: Any) {
-            guard !isDoingTask else {
-                print("Busy Adding Images")
-                return
-            }
-            print("Begin reloading")
-            isDoingTask = true
-            pageAt = 0
-            galleryItems = makePlaceHolders(count: queryAmount)
-            
-            collectionView.reloadData()
-            reset(collectionView: collectionView)
-            
-            
-            Task {
-                do {
-                    try await performDownloads(count: queryAmount, page: pageAt)
-                    
-                    isDoingTask = false
-                    print("Finished Reloading")
-                } catch {
-                    print(error)
-                }
-            }
+            ImgurNetworkManager.cancellation = true
+//            guard !isDoingTask else {
+//                print("Busy Adding Images")
+//                return
+//            }
+//            print("Begin reloading")
+//            isDoingTask = true
+//            pageAt = 0
+//            galleryItems = makePlaceHolders(count: queryAmount)
+//
+//            collectionView.reloadData()
+//            reset(collectionView: collectionView)
+//
+//
+//            Task {
+//                do {
+//                    try await performDownloads(count: queryAmount, page: pageAt)
+//
+//                    isDoingTask = false
+//                    print("Finished Reloading")
+//                } catch {
+//                    print(error)
+//                }
+//            }
         }
 
 //MARK: download Functions
@@ -121,21 +122,49 @@ class ViewController: UIViewController {
         
         let urls = try imgurManager.getLinks(from: model)
         
-        async let images = try await imgurManager.multipleDownload(with: urls)
+        var images: [UIImage] = []
+        
+//        let increment = 5
+//        let remainder = count % increment
+//
+//        var lowerbound = 0
+//        if remainder == 0 {
+//            for upperbound in stride(from: 5, through: count, by: increment){
+//                let newImages = try await imgurManager.multipleDownload(with: limitedURL[lowerbound..<upperbound])
+//                images.append(contentsOf: newImages)
+//                lowerbound += increment
+//            }
+//        }
+        let count = 60
+
+        let limitedUrls = urls[0..<count].compactMap { $0 }
+        
+        images = try await imgurManager.multipleDownload(with: limitedUrls)
         
         var items = [ImgurGalleryItem]()
-        
-        for i in 0..<model.data.count {
+
+        for i in 0..<count {
             let newItem = ImgurGalleryItem(
                 id: model.data[i].id,
                 is_album: model.data[i].is_album,
-                image: try await images[i],
+                image: images[i],
                 type: model.data[i].type ?? model.data[i].images![0].type,
                 title: model.data[i].title
             )
             items.append(newItem)
         }
-        
+
+//        for i in 0..<model.data.count {
+//            let newItem = ImgurGalleryItem(
+//                id: model.data[i].id,
+//                is_album: model.data[i].is_album,
+//                image: images[i],
+//                type: model.data[i].type ?? model.data[i].images![0].type,
+//                title: model.data[i].title
+//            )
+//            items.append(newItem)
+//        }
+//
         galleryItems.append(contentsOf: items)
         DispatchQueue.main.async {
             self.collectionView.reloadData()

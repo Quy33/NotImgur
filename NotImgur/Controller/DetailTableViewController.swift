@@ -37,9 +37,11 @@ class DetailTableViewController: UITableViewController {
                     album = getAlbumDetail(model)
                     let urls = album.images.compactMap { $0.url }
 
-                    let images = try await imgurManager.multipleDownload(with: urls)
+//                    let images = try await imgurManager.multipleDownload(with: urls)
                     for i in 0..<album.images.count {
-                        album.images[i].image = images[i]
+                        let newImage = try await imgurManager.singleDownload(with: urls[i])
+                        //album.images[i].image = images[i]
+                        album.images[i].image = newImage
                     }
                 } else {
                     image = ImageDetailItem(title: model.data.title, description: model.data.description, link: model.data.link, animated: model.data.animated!, mp4: model.data.mp4)
