@@ -21,7 +21,7 @@ class ImageDetailItem {
     var mp4: String?
     
     var image: UIImage
-        
+            
     var url: URL? {
         let newLink = animated ? concatStr(with: mp4!) : concatStr(with: link)
         return URL(string: newLink)

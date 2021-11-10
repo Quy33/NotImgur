@@ -19,15 +19,15 @@ class DetailTableViewController: UITableViewController {
     private var image = ImageDetailItem(title: "Place Holder", description: "Place Holder")
     private var height = [CGFloat]()
     
-    var itemGot = (id: "y7ipPF0",isAlbum: true)
-    //var itemGot = (id: "RyCfJtf",isAlbum: false)
-    //var itemGot = (id: "4NfPaoN",isAlbum: true)
+    var itemGot = (id: "ekIqbY2",isAlbum: true)
+    //var itemGot = (id: "KxiXTUT",isAlbum: true)
+    //var itemGot = (id: "MIvOvIl",isAlbum: true)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         tableView.register(UINib(nibName: DetailCell.identifier, bundle: nil), forCellReuseIdentifier: DetailCell.identifier)
-        //print(itemGot)
+        print(itemGot)
         
         Task {
             do {
