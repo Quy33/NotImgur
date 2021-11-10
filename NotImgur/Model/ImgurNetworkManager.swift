@@ -72,20 +72,22 @@ struct ImgurNetworkManager {
     }
 
     func multipleDownload(with links: [URL]) async throws -> [UIImage] {
-        let unOrderedImages = try await withThrowingTaskGroup(of: (index: Int, image: UIImage).self, body: { group -> [(index: Int, image: UIImage)] in
+        let unOrderedImages = try await withThrowingTaskGroup(of: (index: Int, image: UIImage).self, body: {
+            group -> [(index: Int, image: UIImage)] in
+            
             for (index,link) in links.enumerated() {
                 group.addTask {
                     let image = try await singleDownload(with: link)
                     return (index: index,image: image)
                 }
             }
-//            guard !ImgurNetworkManager.cancellation else {
-//                throw ImageDownloadError.cancelDownloading
-//            }
+            
             var results: [(index: Int, image: UIImage)] = []
+            
             for try await result in group {
                 results.append(result)
             }
+            
             print("Finish Tasks")
             return results
         })

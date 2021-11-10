@@ -68,7 +68,6 @@ class ViewController: UIViewController {
                     print(error)
                 }
             }
-            
         }
 
         @IBAction func reloadPressed(_ sender: Any) {
@@ -122,7 +121,7 @@ class ViewController: UIViewController {
         
         let urls = try imgurManager.getLinks(from: model)
         
-        var images: [UIImage] = []
+        //var images: [UIImage] = []
         
 //        let increment = 5
 //        let remainder = count % increment
@@ -135,15 +134,36 @@ class ViewController: UIViewController {
 //                lowerbound += increment
 //            }
 //        }
-        let count = 60
-
-        let limitedUrls = urls[0..<count].compactMap { $0 }
+        let loadFirstUrls = urls[0..<queryAmount].compactMap { $0 }
         
-        images = try await imgurManager.multipleDownload(with: limitedUrls)
-        
-        var items = [ImgurGalleryItem]()
+        let remainingUrls = urls[queryAmount..<urls.count].compactMap { $0 }
 
-        for i in 0..<count {
+        let loadFirstRange = 0..<queryAmount
+        
+        let remainingRange = queryAmount..<urls.count
+        
+        //First 60 image
+        
+        let firstImages = try await imgurManager.multipleDownload(with: loadFirstUrls)
+        
+        var firstItems = makeGalleryItems(withRange: loadFirstRange, model: model, images: firstImages)
+        
+        galleryItems.append(contentsOf: firstItems)
+        updateAfterDownloading(collectionView: collectionView)
+        
+        //The rest load here
+        
+        let remainingImages = try await imgurManager.multipleDownload(with: remainingUrls)
+        
+        var remainingItems = makeGalleryItems(withRange: remainingRange, model: model, images: remainingImages)
+        
+        galleryItems.append(contentsOf: remainingItems)
+        updateAfterDownloading(collectionView: collectionView)
+    }
+    
+    private func makeGalleryItems(withRange range: Range<Int>, model: GalleryModel, images: [UIImage]) -> [ImgurGalleryItem] {
+        var items: [ImgurGalleryItem] = []
+        for i in range {
             let newItem = ImgurGalleryItem(
                 id: model.data[i].id,
                 is_album: model.data[i].is_album,
@@ -153,23 +173,7 @@ class ViewController: UIViewController {
             )
             items.append(newItem)
         }
-
-//        for i in 0..<model.data.count {
-//            let newItem = ImgurGalleryItem(
-//                id: model.data[i].id,
-//                is_album: model.data[i].is_album,
-//                image: images[i],
-//                type: model.data[i].type ?? model.data[i].images![0].type,
-//                title: model.data[i].title
-//            )
-//            items.append(newItem)
-//        }
-//
-        galleryItems.append(contentsOf: items)
-        DispatchQueue.main.async {
-            self.collectionView.reloadData()
-            self.reload(collectionView: self.collectionView)
-        }
+        return items
     }
     
     private func makePlaceHolders(count: Int) -> [ImgurGalleryItem] {
@@ -178,6 +182,12 @@ class ViewController: UIViewController {
     
     
 //MARK: Function to update & reset the collectionView
+    private func updateAfterDownloading(collectionView: UICollectionView) {
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+            self.reload(collectionView: self.collectionView)
+        }
+    }
     private func update(collectionView: UICollectionView, updateItemAt indexPath: IndexPath){
         reload(collectionView: collectionView)
         collectionView.reloadItems(at: [indexPath])
