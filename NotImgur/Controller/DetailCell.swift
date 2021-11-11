@@ -12,7 +12,7 @@ class DetailCell: UITableViewCell {
     @IBOutlet weak var cellImage: UIImageView?
     @IBOutlet weak var titleLabel: UILabel?
     @IBOutlet weak var descriptionLabel: UILabel?
-    @IBOutlet weak var imageFrame: UIView?
+
 
     
     static let identifier = "DetailCell"
@@ -22,9 +22,8 @@ class DetailCell: UITableViewCell {
         // Initialization code
     }
     
-    func config(image: UIImage, title: String?, desc: String?, height: CGFloat){
+    func config(image: UIImage, title: String?, desc: String?){
         cellImage?.image = image
-        imageFrame?.frame.size.height = height
         if title == nil {
             titleLabel?.isHidden = true
         } else {

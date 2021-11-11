@@ -32,24 +32,10 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="whA-B9-PQA">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="83e-sG-Pnm">
                                 <rect key="frame" x="0.0" y="60" width="570" height="403.5"/>
-                                <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="83e-sG-Pnm">
-                                        <rect key="frame" x="0.0" y="0.0" width="570" height="403.5"/>
-                                        <color key="backgroundColor" name="AccentColor"/>
-                                    </imageView>
-                                </subviews>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <constraints>
-                                    <constraint firstItem="83e-sG-Pnm" firstAttribute="leading" secondItem="whA-B9-PQA" secondAttribute="leading" id="1dQ-am-LNi"/>
-                                    <constraint firstAttribute="trailing" secondItem="83e-sG-Pnm" secondAttribute="trailing" id="3M7-hy-92t"/>
-                                    <constraint firstItem="83e-sG-Pnm" firstAttribute="leading" secondItem="whA-B9-PQA" secondAttribute="leading" id="CXM-9k-P2u"/>
-                                    <constraint firstItem="83e-sG-Pnm" firstAttribute="top" secondItem="whA-B9-PQA" secondAttribute="top" id="qEo-bs-dv2"/>
-                                    <constraint firstAttribute="trailing" secondItem="83e-sG-Pnm" secondAttribute="trailing" id="wMl-6d-zL6"/>
-                                    <constraint firstAttribute="bottom" secondItem="83e-sG-Pnm" secondAttribute="bottom" id="xyb-sJ-2Ga"/>
-                                </constraints>
-                            </view>
+                                <color key="backgroundColor" name="AccentColor"/>
+                            </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2e0-WR-nAj">
                                 <rect key="frame" x="0.0" y="463.5" width="570" height="10.5"/>
                                 <color key="backgroundColor" systemColor="labelColor"/>
@@ -71,7 +57,6 @@
             <connections>
                 <outlet property="cellImage" destination="83e-sG-Pnm" id="4CZ-q6-1KE"/>
                 <outlet property="descriptionLabel" destination="2e0-WR-nAj" id="XXs-Sb-9eW"/>
-                <outlet property="imageFrame" destination="83e-sG-Pnm" id="ttm-C7-JDo"/>
                 <outlet property="titleLabel" destination="pfc-3w-TXs" id="7RS-vZ-UM9"/>
             </connections>
             <point key="canvasLocation" x="320.28985507246381" y="206.25"/>
@@ -83,9 +68,6 @@
         </namedColor>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemGray2Color">
             <color red="0.68235294117647061" green="0.68235294117647061" blue="0.69803921568627447" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

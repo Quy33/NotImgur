@@ -26,7 +26,7 @@ class DetailTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        ImageDetailItem.thumbnailSize = .mediumThumbnail
+        ImageDetailItem.thumbnailSize = .largeThumbnail
         
         tableView.register(UINib(nibName: DetailCell.identifier, bundle: nil), forCellReuseIdentifier: DetailCell.identifier)
         print(itemGot)
@@ -105,12 +105,15 @@ class DetailTableViewController: UITableViewController {
                 title = album.title
             } else { title = album.images[indexPath.row].title }
             
-            cell.config(image: albumItem.image, title: title, desc: description, height: calculateHeight(albumItem.image.size))
+//            cell.config(image: albumItem.image, title: title, desc: description, height: calculateHeight(albumItem.image.size))
+            cell.config(image: albumItem.image, title: nil, desc: nil)
+            height.append(calculateHeight(albumItem.image.size))
         } else {
-            cell.config(image: image.image, title: image.title, desc: image.description, height: calculateHeight(image.image.size))
+//            cell.config(image: image.image, title: image.title, desc: image.description, height: calculateHeight(image.image.size))
+            cell.config(image: image.image, title: image.title, desc: image.description)
         }
         
-        height.append(cell.frame.height)
+        //height.append(cell.frame.height)
         return cell
     }
 //MARK: TableView Delegate Method
