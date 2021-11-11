@@ -19,12 +19,14 @@ class DetailTableViewController: UITableViewController {
     private var image = ImageDetailItem(title: "Place Holder", description: "Place Holder")
     private var height = [CGFloat]()
     
-    var itemGot = (id: "ekIqbY2",isAlbum: true)
-    //var itemGot = (id: "KxiXTUT",isAlbum: true)
+    //var itemGot = (id: "ekIqbY2",isAlbum: true)
+    var itemGot = (id: "KxiXTUT",isAlbum: true)
     //var itemGot = (id: "MIvOvIl",isAlbum: true)
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        ImageDetailItem.thumbnailSize = .mediumThumbnail
         
         tableView.register(UINib(nibName: DetailCell.identifier, bundle: nil), forCellReuseIdentifier: DetailCell.identifier)
         print(itemGot)
@@ -36,6 +38,7 @@ class DetailTableViewController: UITableViewController {
                 if itemGot.isAlbum {
                     album = getAlbumDetail(model)
                     let urls = album.images.compactMap { $0.url }
+                    print(urls)
 
                     let images = try await imgurManager.multipleDownload(with: urls)
                     for i in 0..<album.images.count {

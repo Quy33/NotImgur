@@ -21,9 +21,18 @@ class ImageDetailItem {
     var mp4: String?
     
     var image: UIImage
+    
+    static var thumbnailSize: ImgurNetworkManager.ThumbnailSize = .mediumThumbnail
+    
+    static var isThumbnail = true
             
     var url: URL? {
-        let newLink = animated ? concatStr(with: mp4!) : concatStr(with: link)
+        var newLink = ""
+        if ImageDetailItem.isThumbnail {
+            newLink = animated ? concatStr(with: mp4!) : concatStr(with: link)
+        } else {
+            newLink = animated ? concatStr(with: mp4!) : link
+        }
         return URL(string: newLink)
     }
     private func concatStr(with string: String) -> String {
@@ -31,7 +40,7 @@ class ImageDetailItem {
         guard let i = result.lastIndex(of: ".") else {
             return ""
         }
-        result.insert("m", at: i)
+        result.insert(ImageDetailItem.thumbnailSize.rawValue, at: i)
         return result
     }
     convenience init() {
