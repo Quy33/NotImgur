@@ -13,8 +13,6 @@ class DetailCell: UITableViewCell {
     @IBOutlet weak var titleLabel: UILabel?
     @IBOutlet weak var descriptionLabel: UILabel?
 
-
-    
     static let identifier = "DetailCell"
 
     override func awakeFromNib() {
