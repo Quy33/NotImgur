@@ -44,7 +44,7 @@ class DetailTableViewController: UITableViewController {
                     for i in 0..<album.images.count {
                         album.images[i].image = images[i]
                     }
-                    heights = images.map { calculateHeight($0.size) + 50 }
+                    heights = images.map { calculateHeight($0.size) }
                 } else {
                     image = ImageDetailItem(title: model.data.title, description: model.data.description, link: model.data.link, animated: model.data.animated!, mp4: model.data.mp4)
                     image.image = try await imgurManager.singleDownload(with: image.url!)
@@ -106,7 +106,7 @@ class DetailTableViewController: UITableViewController {
                 title = album.title
             } else { title = album.images[indexPath.row].title }
 //            cell.config(image: albumItem.image, title: title, desc: description)
-            cell.config(image: albumItem.image, title: title, desc: nil)
+            cell.config(image: albumItem.image, title: title, desc: description)
         } else {
 //            cell.config(image: image.image, title: image.title, desc: image.description)
             cell.config(image: image.image, title: image.title, desc: image.description)
@@ -116,13 +116,13 @@ class DetailTableViewController: UITableViewController {
         return cell
     }
 //MARK: TableView Delegate Method
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let placeHolderImg = UIImage(named: "placeholder")!
-        guard !heights.isEmpty else {
-            return placeHolderImg.size.height
-        }
-        return heights[indexPath.row]
-    }
+//    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        let placeHolderImg = UIImage(named: "placeholder")!
+//        guard !heights.isEmpty else {
+//            return placeHolderImg.size.height
+//        }
+//        return heights[indexPath.row]
+//    }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if itemGot.isAlbum {
             let item = album.images[indexPath.row]
