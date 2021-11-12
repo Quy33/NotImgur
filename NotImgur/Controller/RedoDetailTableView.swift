@@ -36,26 +36,28 @@ class RedoDetailTableView: UITableViewController {
     var dummyDesc5 = """
     “I’m not getting in the car, Tim,” Mr Pence replied. “I trust you, Tim, but you’re not driving the car. If I get in that vehicle, you guys are taking off. I’m not getting in the car.”\n\n-Mike Pence, January 6th, 2021\n\nWhat if they weren\'t chanting: \"Hang Mike Pence!\" but were actually chanting: \"This Great Fence!\" or \"This Makes Sense!\" or something?  I\'m going head on over to the fOxNEwS and see what the Branson set thinks.
     """
-    private var dummy = AlbumDetailItem(title: "Test Title", description: nil, images: .init(repeating: ImageDetailItem(), count: 20))
+    private var dummy = AlbumDetailItem(title: "Something", description: nil, images: .init(repeating: ImageDetailItem(), count: 20))
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        registerCell()
+        registerCell(DetailCell.identifier)
+        registerCell(TopAndBottomCell.identifier)
+        
+        tableView.rowHeight = 40
         
         
-        
-//        Task {
-//            let model = try await imgurManager.getDetail(with: itemGot)
-//            print(model.data.title)
-//            print(model.data.description)
-//            print(model.data.images?.count)
-//            for item in model.data.images! {
-//                print("title: \(item.title)")
-//                print("desc: \(item.description)")
-//            }
-//        }
+        Task {
+            let model = try await imgurManager.getDetail(with: itemGot)
+            print(model.data.title)
+            print(model.data.description)
+            print(model.data.images?.count)
+            for item in model.data.images! {
+                print("title: \(item.title)")
+                print("desc: \(item.description)")
+            }
+        }
     }
 
     // MARK: - Table view data source
@@ -63,22 +65,41 @@ class RedoDetailTableView: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return dummy.images.count
+        guard !dummy.images.isEmpty else {
+            return 0
+        }
+        return dummy.images.count + 2
     }
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: DetailCell.identifier, for: indexPath) as! DetailCell
-        // Configure the cell...
         
-        return cell
+        let labelCell = tableView.dequeueReusableCell(withIdentifier: TopAndBottomCell.identifier, for: indexPath) as! TopAndBottomCell
+        
+        let placeHolder = UIImage(named: "placeholder")!
+        // Configure the cell...
+        //Top
+        if indexPath.row == 0 {
+            return labelCell
+        } else if indexPath.row == dummy.images.count {
+            return labelCell
+        } else {
+            //The rest
+            guard !dummy.images.isEmpty else {
+                return cell
+            }
+            let imagesItem = dummy.images[indexPath.row]
+            cell.config(image: placeHolder, title: imagesItem.title, desc: imagesItem.description)
+            return cell
+        }
     }
 
     //MARK: Table View Delegate
     
     //MARK: Misc Functions
-    func registerCell() {
-        let nib = UINib(nibName: DetailCell.identifier, bundle: nil)
-        tableView.register(nib , forCellReuseIdentifier: DetailCell.identifier)
+    func registerCell(_ identifier: String) {
+        let nib = UINib(nibName: identifier, bundle: nil)
+        tableView.register(nib , forCellReuseIdentifier: identifier)
     }
 }
