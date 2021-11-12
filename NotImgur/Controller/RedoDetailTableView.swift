@@ -12,11 +12,24 @@ class RedoDetailTableView: UITableViewController {
     static let identifier = "RedoDetailTableView"
     
     var itemGot = (id: "KxiXTUT",isAlbum: true)
+    
+    private var imgurManager = ImgurNetworkManager()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         registerCell()
+        
+        Task {
+            let model = try await imgurManager.getDetail(with: itemGot)
+            print(model.data.title)
+            print(model.data.description)
+            print(model.data.images?.count)
+            for item in model.data.images! {
+                print(item.title)
+                print(item.description)
+            }
+        }
     }
 
     // MARK: - Table view data source
