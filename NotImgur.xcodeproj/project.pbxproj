@@ -78,11 +78,11 @@
 			children = (
 				5301112C27312B91004377B1 /* Controller */,
 				5301112B27312B87004377B1 /* View */,
-				5301112A27312B7C004377B1 /* Model */,
 				5301111227312057004377B1 /* AppDelegate.swift */,
 				5301111427312057004377B1 /* SceneDelegate.swift */,
 				5301111B2731205B004377B1 /* Assets.xcassets */,
 				530111202731205B004377B1 /* Info.plist */,
+				5301112A27312B7C004377B1 /* Model */,
 			);
 			path = NotImgur;
 			sourceTree = "<group>";

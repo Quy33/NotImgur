@@ -12,8 +12,12 @@ class DetailCell: UITableViewCell {
     @IBOutlet weak var cellImage: UIImageView?
     @IBOutlet weak var titleLabel: UILabel?
     @IBOutlet weak var descriptionLabel: UILabel?
+    @IBOutlet weak var stackView: UIStackView?
 
     static let identifier = "DetailCell"
+    var stackWidth : CGFloat {
+        stackView?.bounds.width ?? 0
+    }
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -32,6 +36,13 @@ class DetailCell: UITableViewCell {
         } else {
             descriptionLabel?.text = desc
         }
+//        titleLabel?.text = title ?? ""
+//        descriptionLabel?.text = desc ?? ""
+    }
+    func getValue() -> CGFloat {
+        let titleHeight = titleLabel?.frame.height
+        let descriptionHeight = descriptionLabel?.frame.height
+        return titleHeight! + descriptionHeight!
     }
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
