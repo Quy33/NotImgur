@@ -44,9 +44,9 @@ class ImageDetailItem {
         return result
     }
     convenience init() {
-        self.init(title: "", description: "")
+        self.init(title: nil, description: nil)
     }
-    convenience init(title: String, description: String) {
+    convenience init(title: String?, description: String?) {
         self.init(title: title, description: description, link: "", animated: false, mp4: nil)
     }
     init(title: String?, description: String?, link: String, animated: Bool, mp4: String?, image : UIImage = UIImage(named: "placeholder")!) {
@@ -65,7 +65,7 @@ struct AlbumDetailItem {
     init() {
         title = ""
         description = nil
-        images = [ImageDetailItem()]
+        images = []
     }
     init(title: String, description: String?, images: [ImageDetailItem]) {
         self.title = title
