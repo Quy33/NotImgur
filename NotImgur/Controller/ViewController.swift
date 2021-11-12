@@ -203,10 +203,10 @@ extension ViewController: UICollectionViewDelegate {
         
         indexPathToMove = indexPath
         
-        performSegue(withIdentifier: DetailTableViewController.identifier, sender: self)
+        performSegue(withIdentifier: RedoDetailTableView.identifier, sender: self)
     }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        guard let destination = segue.destination as? DetailTableViewController else {
+        guard let destination = segue.destination as? RedoDetailTableView else {
             fatalError("Cannot find the destination")
         }
         destination.itemGot.id = galleryItems[indexPathToMove.item].id

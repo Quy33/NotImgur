@@ -52,4 +52,7 @@ class DetailCell: UITableViewCell {
 //        // Configure the view for the selected state
 //    }
 //
+    
+    static let identifier = "DetailCell"
+    
 }
