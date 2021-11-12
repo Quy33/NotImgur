@@ -24,7 +24,7 @@ class DetailTableViewController: UITableViewController {
     
     //var itemGot = (id: "ekIqbY2",isAlbum: true)
     var itemGot = (id: "KxiXTUT",isAlbum: true)
-    //var itemGot = (id: "pzeNBoT", isAlbum: true)
+    //var itemGot = (id: "tYcEQOX", isAlbum: true)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -123,7 +123,7 @@ class DetailTableViewController: UITableViewController {
                 title = album.title
             } else { title = album.images[indexPath.row].title }
 //            cell.config(image: albumItem.image, title: title, desc: description)
-            cell.config(image: albumItem.image, title: title, desc: nil)
+            cell.config(image: albumItem.image, title: title, desc: description)
             
         } else {
 //            cell.config(image: image.image, title: image.title, desc: image.description)
@@ -145,23 +145,42 @@ class DetailTableViewController: UITableViewController {
         if let detailCell = cell as? DetailCell {
             if detailCell.titleLabel?.frame.height == 0.0 {
                 if !isCached {
-                    var titleHeight: CGFloat = 0.0
+                    var titleHeight: CGFloat
+                    var descHeight: CGFloat
                     if itemGot.isAlbum {
                         for (index,item) in album.images.enumerated() {
+                            
+                            titleHeight = 0.0
+                            descHeight = 0.0
+                            
                             if index == 0 {
+
                                 titleHeight = heightForView(text: album.title, font: .systemFont(ofSize: 17), width: detailCell.stackWidth)
-                                print(titleHeight)
-                                print(heights[index])
+                                
+                                let description = album.description != nil ? album.description : item.description
+                                if let albumDescription = description {
+                                    descHeight = heightForView(text: albumDescription , font: .systemFont(ofSize: 17), width: detailCell.stackWidth)
+                                }
                             } else {
-                                titleHeight = heightForView(text: item.title ?? "", font: .systemFont(ofSize: 17), width: detailCell.stackWidth)
+                                if let albumTitle = item.title {
+                                    titleHeight = heightForView(text: albumTitle, font: .systemFont(ofSize: 17), width: detailCell.stackWidth)
+                                }
+                                if let albumDescription = item.description {
+                                    descHeight = heightForView(text: albumDescription , font: .systemFont(ofSize: 17), width: detailCell.stackWidth)
+                                }
                             }
-                            heights[index] += titleHeight
+                            print(titleHeight)
+                            print(descHeight)
+                            heights[index] += titleHeight + descHeight
                         }
                     } else {
+                        descHeight = 0.0
                         titleHeight = heightForView(text: image.title!, font: .systemFont(ofSize: 17), width: stackWidth)
-                        heights[0] += titleHeight
+                        if let imageDescription = image.description {
+                            descHeight = heightForView(text: imageDescription, font: .systemFont(ofSize: 17), width: stackWidth)
+                        }
+                        heights[0] += titleHeight + descHeight
                     }
-
                     isCached = true
                     tableView.reloadData()
                 }
@@ -186,7 +205,7 @@ class DetailTableViewController: UITableViewController {
         }
         if let cell = tableView.cellForRow(at: indexPath) as? DetailCell {
             //...
-            print(heights)
+            print(heights[indexPath.row])
             print(cell.frame.height)
         }
     }
