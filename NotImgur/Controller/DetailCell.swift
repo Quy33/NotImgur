@@ -9,9 +9,9 @@ import UIKit
 
 class DetailCell: UITableViewCell {
     
-//    @IBOutlet weak var cellImage: UIImageView?
-//    @IBOutlet weak var titleLabel: UILabel?
-//    @IBOutlet weak var descriptionLabel: UILabel?
+    @IBOutlet weak var cellImage: UIImageView?
+    @IBOutlet weak var titleLabel: UILabel?
+    @IBOutlet weak var descriptionLabel: UILabel?
 //    @IBOutlet weak var stackView: UIStackView?
 //
 //    static let identifier = "DetailCell"
@@ -55,4 +55,9 @@ class DetailCell: UITableViewCell {
     
     static let identifier = "DetailCell"
     
+    func config(image: UIImage, title: String?, desc: String?){
+        cellImage?.image = image
+        titleLabel?.text = title
+        descriptionLabel?.text = desc
+    }
 }
