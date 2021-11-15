@@ -15,8 +15,8 @@ class DetailCell: UITableViewCell {
     @IBOutlet weak var topLabel: UILabel?
     @IBOutlet weak var bottomLabel: UILabel?
     @IBOutlet weak var outerView: UIView?
-    @IBOutlet weak var upperStackView: UIStackView?
-    @IBOutlet weak var lowerStackView: UIStackView?
+    @IBOutlet weak var frameStackView: UIStackView?
+
     
     static let identifier = "DetailCell"
     

@@ -25,7 +25,7 @@ class RedoDetailTableView: UITableViewController {
         super.viewDidLoad()
 
         registerCell(DetailCell.identifier)
-        ImageDetailItem.thumbnailSize = .mediumThumbnail
+        ImageDetailItem.thumbnailSize = .hugeThumbnail
         print(itemGot)
         //Top
         Task {
@@ -41,12 +41,7 @@ class RedoDetailTableView: UITableViewController {
                     }
 
                     heights = .init(repeating: 0.0, count: album.images.count)
-                    print(album.title)
-                    print(album.description)
-                    print(album.images[0].title)
-                    print(album.images[0].description)
                 } else {
-                    
                     image = ImageDetailItem(title: model.data.title, description: model.data.description, link: model.data.link, animated: model.data.animated!, mp4: model.data.mp4)
                     guard let url = image.url else {
                         throw ImgurNetworkManager.ImageDownloadError.badURL
@@ -54,9 +49,6 @@ class RedoDetailTableView: UITableViewController {
                     let newImage = try await imgurManager.singleDownload(with: url)
                     image.image = newImage
                     heights[0] = 0.0
-                    
-                    print(image.title)
-                    print(image.description)
                 }
                 tableView.reloadData()
             } catch {
@@ -125,53 +117,20 @@ class RedoDetailTableView: UITableViewController {
         }
         if !heights.isEmpty {
             if !isCached {
-                if itemGot.isAlbum {
-                    calculateAlbumHeights(detailCell: detailCell)
-                } else {
-                    let frameWidth = detailCell.outerView!.frame.width
-                    
-                    let topTitleHeight = heightForView(text: image.title!, font: .systemFont(ofSize: 17), width: frameWidth)
-                    let imageHeight = calculateHeight(image.image.size)
-                    let bottomDescHeight = heightForView(text: image.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
-                    
-                    let height = topTitleHeight + imageHeight + bottomDescHeight
-                    heights.append(height)
-                }
+                calculateHeights(cell: detailCell, isAlbum: itemGot.isAlbum)
                 isCached = true
                 tableView.reloadData()
             }
         }
     }
     
-    private func calculateAlbumHeights(detailCell: DetailCell) {
-        let frameWidth = detailCell.outerView!.frame.width
-        for (index,item) in album.images.enumerated() {
-
-            let titleHeight = heightForView(text: item.title ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
-            let descHeight = heightForView(text: item.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
-            let imageHeight = calculateHeight(item.image.size)
-
-            switch index {
-            case 0:
-                let topTitleHeight = heightForView(text: album.title, font: .systemFont(ofSize: 17), width: frameWidth)
-                heights[index] = topTitleHeight + titleHeight + descHeight + imageHeight
-            case album.images.count - 1:
-                let bottomDescHeight = heightForView(text: album.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
-
-                heights[index] = bottomDescHeight + titleHeight + descHeight + imageHeight
-            default:
-                heights[index] = titleHeight + descHeight + imageHeight
-            }
-        }
-    }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     }
     
     //MARK: Height Functions
-    func calculateHeight(_ pictureSize: CGSize)->CGFloat{
-        let deviceSize = view.frame.size
-        let wOffSet = pictureSize.width - deviceSize.width
+    func calculateHeight(_ pictureSize: CGSize, frameWidth width: CGFloat )->CGFloat{
+        let wOffSet = pictureSize.width - width
         let wOffSetPercent = (wOffSet*100)/pictureSize.width
         let hOffSet = (wOffSetPercent*pictureSize.height)/100
         let newHeight = pictureSize.height - hOffSet
@@ -186,6 +145,40 @@ class RedoDetailTableView: UITableViewController {
 
         label.sizeToFit()
         return label.frame.height
+    }
+    private func calculateHeights(cell detailCell: DetailCell ,isAlbum: Bool) {
+        
+        let horizontalInset: CGFloat = 10 * 2
+        let verticalInset: CGFloat = 10 * 2
+        
+        let frameWidth = detailCell.outerView!.frame.width - horizontalInset
+        if isAlbum {
+            for (index,item) in album.images.enumerated() {
+
+                let titleHeight = heightForView(text: item.title ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
+                let descHeight = heightForView(text: item.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
+                let imageHeight = calculateHeight(item.image.size, frameWidth: frameWidth)
+
+                switch index {
+                case 0:
+                    let topTitleHeight = heightForView(text: album.title, font: .systemFont(ofSize: 17), width: frameWidth)
+                    heights[index] = topTitleHeight + titleHeight + descHeight + imageHeight + verticalInset
+                case album.images.count - 1:
+                    let bottomDescHeight = heightForView(text: album.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
+
+                    heights[index] = bottomDescHeight + titleHeight + descHeight + imageHeight + verticalInset
+                default:
+                    heights[index] = titleHeight + descHeight + imageHeight + verticalInset
+                }
+            }
+        } else {
+            let topTitleHeight = heightForView(text: image.title!, font: .systemFont(ofSize: 17), width: frameWidth)
+            let imageHeight = calculateHeight(image.image.size, frameWidth: frameWidth)
+            let bottomDescHeight = heightForView(text: image.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
+            
+            let height = topTitleHeight + imageHeight + bottomDescHeight + horizontalInset
+            heights.append(height)
+        }
     }
     //MARK: Cell Function
     func registerCell(_ identifier: String) {
