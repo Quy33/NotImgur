@@ -21,7 +21,7 @@
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sHh-0j-LeS">
                         <rect key="frame" x="0.0" y="0.0" width="580" height="468"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" axis="vertical" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="UBM-kl-urX">
+                            <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" axis="vertical" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="UBM-kl-urX" userLabel="Upper Stack View">
                                 <rect key="frame" x="0.0" y="0.0" width="580" height="41"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uwK-vL-1Jn">
@@ -53,7 +53,7 @@
                                 <rect key="frame" x="0.0" y="41" width="580" height="386"/>
                                 <color key="backgroundColor" name="AccentColor"/>
                             </imageView>
-                            <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Qti-fv-4QZ">
+                            <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="1000" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="Qti-fv-4QZ" userLabel="Lower Stack View">
                                 <rect key="frame" x="0.0" y="427" width="580" height="41"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="1000" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OAU-0M-pES">
@@ -109,11 +109,9 @@
                 <outlet property="bottomLabel" destination="aJE-0n-fWc" id="bSf-SE-Fao"/>
                 <outlet property="cellImage" destination="Vwz-yI-nOI" id="rAn-5j-191"/>
                 <outlet property="descriptionLabel" destination="OAU-0M-pES" id="ljv-pg-4dP"/>
-                <outlet property="lowerStackView" destination="Qti-fv-4QZ" id="r4p-8x-6PL"/>
                 <outlet property="outerView" destination="H2p-sc-9uM" id="q8z-kr-fEd"/>
                 <outlet property="titleLabel" destination="OKR-uF-oSq" id="3GZ-lu-sIP"/>
                 <outlet property="topLabel" destination="uwK-vL-1Jn" id="aZd-DI-9eN"/>
-                <outlet property="upperStackView" destination="UBM-kl-urX" id="fQM-Lq-tQ0"/>
             </connections>
             <point key="canvasLocation" x="320.28985507246381" y="200.89285714285714"/>
         </tableViewCell>
