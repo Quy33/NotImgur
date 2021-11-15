@@ -44,7 +44,7 @@ class RedoDetailTableView: UITableViewController {
         super.viewDidLoad()
 
         registerCell(DetailCell.identifier)
-        
+        ImageDetailItem.thumbnailSize = .hugeThumbnail
         //Top
         Task {
             let model = try await imgurManager.getDetail(with: itemGot)
