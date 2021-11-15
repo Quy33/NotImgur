@@ -156,7 +156,7 @@ class RedoDetailTableView: UITableViewController {
         let verticalInset: CGFloat = 10 * 2
         
         let frameWidth = detailCell.outerView!.frame.width - horizontalInset
-        var paddingCount = 2
+        var paddingCount = 0
         let padding: CGFloat = 5
         if isAlbum {
             for (index,item) in album.images.enumerated() {
@@ -164,8 +164,9 @@ class RedoDetailTableView: UITableViewController {
                 let titleHeight = heightForView(text: item.title ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
                 let descHeight = heightForView(text: item.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
                 let imageHeight = calculateHeight(item.image.size, frameWidth: frameWidth)
-                heights[index] = titleHeight + descHeight + imageHeight + verticalInset + (padding * CGFloat(paddingCount))
-
+                heights[index] = titleHeight + descHeight + imageHeight + verticalInset
+                
+                paddingCount = descHeight != 0.0 ? paddingCount + 1 : paddingCount
 
                 switch index {
                 case 0:
@@ -175,20 +176,23 @@ class RedoDetailTableView: UITableViewController {
                     if album.images.count == 1 {
                         let bottomDescHeight = heightForView(text: album.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
                         
-                        heights[index] = topTitleHeight + bottomDescHeight + heights[index]
+                        paddingCount += 1
+                        paddingCount = bottomDescHeight != 0.0 ? paddingCount + 1 : paddingCount
+                        
+                        heights[index] = topTitleHeight + bottomDescHeight + heights[index] + (padding * CGFloat(paddingCount))
+                        print(paddingCount)
                     } else {
                         
-                        heights[index] = topTitleHeight + heights[index]
+                        heights[index] = topTitleHeight + heights[index] + (padding * CGFloat(paddingCount))
                     }
                     
                 case album.images.count - 1:
                     let bottomDescHeight = heightForView(text: album.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
 
-                    heights[index] = bottomDescHeight + heights[index]
+                    heights[index] = bottomDescHeight + heights[index] + (padding * CGFloat(paddingCount))
                     
                 default:
-                    break
-                    //heights[index] = titleHeight + descHeight + imageHeight + verticalInset
+                    heights[index] = heights[index] + (padding * CGFloat(paddingCount))
                 }
             }
         } else {
