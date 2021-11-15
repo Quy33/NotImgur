@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import AVKit
+import AVFoundation
 
 class RedoDetailTableView: UITableViewController {
     
@@ -26,11 +28,9 @@ class RedoDetailTableView: UITableViewController {
         super.viewDidLoad()
 
         registerCell(DetailCell.identifier)
-        ImageDetailItem.thumbnailSize = .hugeThumbnail
-        ImageDetailItem.isThumbnail = false
-        
-        print(itemGot)
-        //Top
+        ImageDetailItem.thumbnailSize = .mediumThumbnail
+        //ImageDetailItem.isThumbnail = false
+                
         Task {
             do {
                 let model = try await imgurManager.getDetail(with: itemGot)
@@ -44,15 +44,13 @@ class RedoDetailTableView: UITableViewController {
                     }
 
                     heights = .init(repeating: 0.0, count: album.images.count)
-                    print(album.title)
-                    print(album.description)
-                    print(album.images[0].title)
-                    print(album.images[0].description)
                 } else {
                     image = ImageDetailItem(title: model.data.title, description: model.data.description, link: model.data.link, animated: model.data.animated!, mp4: model.data.mp4)
+                    
                     guard let url = image.url else {
                         throw ImgurNetworkManager.ImageDownloadError.badURL
                     }
+                    
                     let newImage = try await imgurManager.singleDownload(with: url)
                     image.image = newImage
                     heights.append(0.0)
@@ -61,7 +59,6 @@ class RedoDetailTableView: UITableViewController {
             } catch {
                 print(error)
             }
-           
         }
     }
 
@@ -69,7 +66,6 @@ class RedoDetailTableView: UITableViewController {
 
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         guard !heights.isEmpty else {
             return 0
         }
@@ -95,6 +91,7 @@ class RedoDetailTableView: UITableViewController {
             let item = album.images[indexPath.row]
             
             if album.images.count == 1 {
+                //In case the album has only 1 item
                 cell.config(image: item.image, title: item.title, desc: item.description, top: album.title, bottom: album.description, isLast: true)
             } else {
                 if indexPath.row == 0 {
@@ -124,7 +121,6 @@ class RedoDetailTableView: UITableViewController {
         guard let detailCell = cell as? DetailCell else{
             return
         }
-        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         if !heights.isEmpty {
             if !isCached {
                 calculateHeights(cell: detailCell, isAlbum: itemGot.isAlbum)
@@ -136,17 +132,33 @@ class RedoDetailTableView: UITableViewController {
     
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if itemGot.isAlbum {
+            let item = album.images[indexPath.row]
+            if item.animated {
+                guard let url = URL(string: item.mp4!) else {
+                    return
+                }
+                playVideo(url: url)
+            }
+        } else {
+            if image.animated {
+                guard let url = URL(string: image.mp4!) else {
+                    return
+                }
+                playVideo(url: url)
+            }
+        }
     }
     
     //MARK: Height Functions
-    func calculateHeight(_ pictureSize: CGSize, frameWidth width: CGFloat )->CGFloat{
+    private func calculateHeight(_ pictureSize: CGSize, frameWidth width: CGFloat )->CGFloat{
         let wOffSet = pictureSize.width - width
         let wOffSetPercent = (wOffSet*100)/pictureSize.width
         let hOffSet = (wOffSetPercent*pictureSize.height)/100
         let newHeight = pictureSize.height - hOffSet
         return newHeight
     }
-    func heightForView(text: String, font: UIFont, width: CGFloat) -> CGFloat {
+    private func heightForView(text: String, font: UIFont, width: CGFloat) -> CGFloat {
         let label = UILabel(frame: CGRect(x: 0, y: 0, width: width, height: CGFloat.greatestFiniteMagnitude))
         label.numberOfLines = 0
         label.lineBreakMode = .byTruncatingTail
@@ -207,16 +219,22 @@ class RedoDetailTableView: UITableViewController {
                 }
             }
         } else {
-            let topTitleHeight = heightForView(text: image.title!, font: .systemFont(ofSize: 17), width: frameWidth)
+            var topTitleHeight = heightForView(text: image.title!, font: .systemFont(ofSize: 17), width: labelFrameWidth)
+            
+            topTitleHeight += labelVInsets
+            
             let imageHeight = calculateHeight(image.image.size, frameWidth: frameWidth)
-            let bottomDescHeight = heightForView(text: image.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
+            
+            var bottomDescHeight = heightForView(text: image.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
+            
+            bottomDescHeight = bottomDescHeight != 0 ? bottomDescHeight + labelVInsets : bottomDescHeight
             
             let height = topTitleHeight + imageHeight + bottomDescHeight
-            heights.append(height)
+            heights[0] = height
         }
     }
     //MARK: Cell Function
-    func registerCell(_ identifier: String) {
+    private func registerCell(_ identifier: String) {
         let nib = UINib(nibName: identifier, bundle: nil)
         tableView.register(nib , forCellReuseIdentifier: identifier)
     }
@@ -229,5 +247,16 @@ class RedoDetailTableView: UITableViewController {
             newAlbum.images.append(newImage)
         }
         return newAlbum
+    }
+    //MARK: Video Player Function
+    private func playVideo(url: URL) {
+        let player = AVPlayer(url: url)
+
+        let vc = AVPlayerViewController()
+        vc.player = player
+
+        self.present(vc, animated: true) {
+            vc.player?.play()
+        }
     }
 }

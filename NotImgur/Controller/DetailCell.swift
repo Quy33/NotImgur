@@ -26,16 +26,19 @@ class DetailCell: UITableViewCell {
     @IBOutlet weak var separator: UIView?
     
     static let identifier = "DetailCell"
+    
     var separatorHeight : CGFloat {
         separator?.frame.height ?? 0.0
     }
     
     func config(image: UIImage, title: String?, desc: String?, top: String?, bottom: String?, isLast: Bool){
         cellImage?.image = image
+        
         configLabel(text: title, label: titleLabel, frame: titleFrame)
         configLabel(text: desc, label: descriptionLabel, frame: descriptionFrame)
         configLabel(text: top, label: topLabel, frame: topFrame)
         configLabel(text: bottom, label: bottomLabel, frame: bottomFrame)
+        
         if isLast {
             separator?.isHidden = true
         } else {
