@@ -26,6 +26,26 @@ class DetailCell: UITableViewCell {
         descriptionLabel?.text = desc
         topLabel?.text = top
         bottomLabel?.text = bottom
-        bottomLabel?.isHidden = true
+        
+        if title == nil {
+            titleLabel?.isHidden = true
+        } else {
+            titleLabel?.isHidden = false
+        }
+        if desc == nil {
+            descriptionLabel?.isHidden = true
+        } else {
+            descriptionLabel?.isHidden = false
+        }
+        if bottom == nil {
+            bottomLabel?.isHidden = true
+        } else {
+            bottomLabel?.isHidden = false
+        }
+        if top == nil {
+            topLabel?.isHidden = true
+        } else {
+            topLabel?.isHidden = false
+        }
     }
 }

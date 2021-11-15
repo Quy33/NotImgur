@@ -156,15 +156,16 @@ class RedoDetailTableView: UITableViewController {
         let verticalInset: CGFloat = 10 * 2
         
         let frameWidth = detailCell.outerView!.frame.width - horizontalInset
+        var paddingCount = 2
+        let padding: CGFloat = 5
         if isAlbum {
             for (index,item) in album.images.enumerated() {
 
                 let titleHeight = heightForView(text: item.title ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
                 let descHeight = heightForView(text: item.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
                 let imageHeight = calculateHeight(item.image.size, frameWidth: frameWidth)
-                heights[index] = titleHeight + descHeight + imageHeight + verticalInset
-//                var paddingCount = 0
-//                let padding: CGFloat = 5
+                heights[index] = titleHeight + descHeight + imageHeight + verticalInset + (padding * CGFloat(paddingCount))
+
 
                 switch index {
                 case 0:
