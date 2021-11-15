@@ -60,19 +60,15 @@
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="aJE-0n-fWc" secondAttribute="trailing" id="2Lp-RW-IJ6"/>
                                     <constraint firstItem="OAU-0M-pES" firstAttribute="leading" secondItem="0AA-zL-HeE" secondAttribute="leading" id="2SH-Aq-yJC"/>
-                                    <constraint firstItem="OAU-0M-pES" firstAttribute="top" secondItem="Vwz-yI-nOI" secondAttribute="bottom" id="62a-HK-Oam"/>
-                                    <constraint firstItem="aJE-0n-fWc" firstAttribute="top" secondItem="OAU-0M-pES" secondAttribute="bottom" id="74y-D0-stI"/>
+                                    <constraint firstAttribute="bottom" secondItem="aJE-0n-fWc" secondAttribute="bottom" id="6QS-5q-mY2"/>
                                     <constraint firstItem="uwK-vL-1Jn" firstAttribute="top" secondItem="0AA-zL-HeE" secondAttribute="top" id="8dk-IJ-3XJ"/>
                                     <constraint firstItem="Vwz-yI-nOI" firstAttribute="leading" secondItem="0AA-zL-HeE" secondAttribute="leading" id="AOL-Gx-Zrf"/>
-                                    <constraint firstItem="OKR-uF-oSq" firstAttribute="top" secondItem="uwK-vL-1Jn" secondAttribute="bottom" id="Dan-ix-UeU"/>
                                     <constraint firstAttribute="trailing" secondItem="OKR-uF-oSq" secondAttribute="trailing" id="Hlr-nb-dyU"/>
-                                    <constraint firstItem="Vwz-yI-nOI" firstAttribute="top" secondItem="OKR-uF-oSq" secondAttribute="bottom" id="QZ8-fg-KU6"/>
                                     <constraint firstAttribute="trailing" secondItem="uwK-vL-1Jn" secondAttribute="trailing" id="UFm-jS-Klf"/>
                                     <constraint firstItem="OKR-uF-oSq" firstAttribute="leading" secondItem="0AA-zL-HeE" secondAttribute="leading" id="WXQ-Gg-866"/>
                                     <constraint firstItem="uwK-vL-1Jn" firstAttribute="leading" secondItem="0AA-zL-HeE" secondAttribute="leading" id="Xuk-A8-fYk"/>
                                     <constraint firstAttribute="trailing" secondItem="Vwz-yI-nOI" secondAttribute="trailing" id="lHM-HJ-9gX"/>
                                     <constraint firstAttribute="trailing" secondItem="OAU-0M-pES" secondAttribute="trailing" id="naK-vc-vie"/>
-                                    <constraint firstAttribute="bottom" secondItem="aJE-0n-fWc" secondAttribute="bottom" id="xPi-63-OlY"/>
                                     <constraint firstItem="aJE-0n-fWc" firstAttribute="leading" secondItem="0AA-zL-HeE" secondAttribute="leading" id="ziJ-cw-hRj"/>
                                 </constraints>
                             </stackView>
@@ -86,6 +82,7 @@
                         </constraints>
                     </view>
                 </subviews>
+                <color key="backgroundColor" systemColor="systemTealColor"/>
                 <constraints>
                     <constraint firstAttribute="trailing" secondItem="sHh-0j-LeS" secondAttribute="trailing" constant="10" id="O5M-ww-1U1"/>
                     <constraint firstItem="sHh-0j-LeS" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="10" id="Z2l-tB-MVC"/>
@@ -121,6 +118,9 @@
         </systemColor>
         <systemColor name="systemPinkColor">
             <color red="1" green="0.17647058823529413" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemTealColor">
+            <color red="0.18823529411764706" green="0.69019607843137254" blue="0.7803921568627451" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemYellowColor">
             <color red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
