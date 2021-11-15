@@ -25,7 +25,7 @@ class RedoDetailTableView: UITableViewController {
         super.viewDidLoad()
 
         registerCell(DetailCell.identifier)
-        ImageDetailItem.thumbnailSize = .hugeThumbnail
+        ImageDetailItem.thumbnailSize = .mediumThumbnail
         print(itemGot)
         //Top
         Task {
@@ -41,6 +41,10 @@ class RedoDetailTableView: UITableViewController {
                     }
 
                     heights = .init(repeating: 0.0, count: album.images.count)
+                    print(album.title)
+                    print(album.description)
+                    print(album.images[0].title)
+                    print(album.images[0].description)
                 } else {
                     image = ImageDetailItem(title: model.data.title, description: model.data.description, link: model.data.link, animated: model.data.animated!, mp4: model.data.mp4)
                     guard let url = image.url else {
@@ -158,17 +162,32 @@ class RedoDetailTableView: UITableViewController {
                 let titleHeight = heightForView(text: item.title ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
                 let descHeight = heightForView(text: item.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
                 let imageHeight = calculateHeight(item.image.size, frameWidth: frameWidth)
+                heights[index] = titleHeight + descHeight + imageHeight + verticalInset
+//                var paddingCount = 0
+//                let padding: CGFloat = 5
 
                 switch index {
                 case 0:
+                    
                     let topTitleHeight = heightForView(text: album.title, font: .systemFont(ofSize: 17), width: frameWidth)
-                    heights[index] = topTitleHeight + titleHeight + descHeight + imageHeight + verticalInset
+                    
+                    if album.images.count == 1 {
+                        let bottomDescHeight = heightForView(text: album.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
+                        
+                        heights[index] = topTitleHeight + bottomDescHeight + heights[index]
+                    } else {
+                        
+                        heights[index] = topTitleHeight + heights[index]
+                    }
+                    
                 case album.images.count - 1:
                     let bottomDescHeight = heightForView(text: album.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
 
-                    heights[index] = bottomDescHeight + titleHeight + descHeight + imageHeight + verticalInset
+                    heights[index] = bottomDescHeight + heights[index]
+                    
                 default:
-                    heights[index] = titleHeight + descHeight + imageHeight + verticalInset
+                    break
+                    //heights[index] = titleHeight + descHeight + imageHeight + verticalInset
                 }
             }
         } else {
