@@ -10,42 +10,46 @@ import UIKit
 class DetailCell: UITableViewCell {
     
     @IBOutlet weak var cellImage: UIImageView?
+    
     @IBOutlet weak var titleLabel: UILabel?
     @IBOutlet weak var descriptionLabel: UILabel?
     @IBOutlet weak var topLabel: UILabel?
     @IBOutlet weak var bottomLabel: UILabel?
+    
     @IBOutlet weak var outerView: UIView?
-    @IBOutlet weak var frameStackView: UIStackView?
-
+    
+    @IBOutlet weak var topFrame: UIView?
+    @IBOutlet weak var bottomFrame: UIView?
+    @IBOutlet weak var titleFrame: UIView?
+    @IBOutlet weak var descriptionFrame: UIView?
+    
+    @IBOutlet weak var separator: UIView?
     
     static let identifier = "DetailCell"
+    var separatorHeight : CGFloat {
+        separator?.frame.height ?? 0.0
+    }
     
-    func config(image: UIImage, title: String?, desc: String?, top: String?, bottom: String?){
+    func config(image: UIImage, title: String?, desc: String?, top: String?, bottom: String?, isLast: Bool){
         cellImage?.image = image
-        titleLabel?.text = title
-        descriptionLabel?.text = desc
-        topLabel?.text = top
-        bottomLabel?.text = bottom
-        
-        if title == nil {
-            titleLabel?.isHidden = true
+        configLabel(text: title, label: titleLabel, frame: titleFrame)
+        configLabel(text: desc, label: descriptionLabel, frame: descriptionFrame)
+        configLabel(text: top, label: topLabel, frame: topFrame)
+        configLabel(text: bottom, label: bottomLabel, frame: bottomFrame)
+        if isLast {
+            separator?.isHidden = true
         } else {
-            titleLabel?.isHidden = false
+            separator?.isHidden = false
         }
-        if desc == nil {
-            descriptionLabel?.isHidden = true
+    }
+    func configLabel(text: String?, label: UILabel?, frame: UIView?) {
+        label?.text = text
+        if text == nil {
+            label?.isHidden = true
+            frame?.isHidden = true
         } else {
-            descriptionLabel?.isHidden = false
-        }
-        if bottom == nil {
-            bottomLabel?.isHidden = true
-        } else {
-            bottomLabel?.isHidden = false
-        }
-        if top == nil {
-            topLabel?.isHidden = true
-        } else {
-            topLabel?.isHidden = false
+            label?.isHidden = false
+            frame?.isHidden = false
         }
     }
 }

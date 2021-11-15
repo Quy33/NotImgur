@@ -12,7 +12,8 @@ class RedoDetailTableView: UITableViewController {
     static let identifier = "RedoDetailTableView"
     
     //var itemGot = (id: "KxiXTUT",isAlbum: true)
-    var itemGot = (id: "Oi4EWz4", isAlbum: true)
+    //var itemGot = (id: "Oi4EWz4", isAlbum: true)
+    var itemGot = (id: "OozMaVC", isAlbum: false)
     
     private var imgurManager = ImgurNetworkManager()
     private var isCached = false
@@ -25,7 +26,9 @@ class RedoDetailTableView: UITableViewController {
         super.viewDidLoad()
 
         registerCell(DetailCell.identifier)
-        ImageDetailItem.thumbnailSize = .mediumThumbnail
+        ImageDetailItem.thumbnailSize = .hugeThumbnail
+        ImageDetailItem.isThumbnail = false
+        
         print(itemGot)
         //Top
         Task {
@@ -52,7 +55,7 @@ class RedoDetailTableView: UITableViewController {
                     }
                     let newImage = try await imgurManager.singleDownload(with: url)
                     image.image = newImage
-                    heights[0] = 0.0
+                    heights.append(0.0)
                 }
                 tableView.reloadData()
             } catch {
@@ -67,10 +70,10 @@ class RedoDetailTableView: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
+        guard !heights.isEmpty else {
+            return 0
+        }
         if itemGot.isAlbum {
-            guard !album.images.isEmpty else {
-                return 0
-            }
             return album.images.count
         } else {
             return 1
@@ -81,29 +84,31 @@ class RedoDetailTableView: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: DetailCell.identifier, for: indexPath) as! DetailCell
         
+        guard !heights.isEmpty else {
+            return cell
+        }
+        
         if itemGot.isAlbum {
-            guard !album.images.isEmpty else {
-                return cell
-            }
+            
             // Configure the cell...
             
             let item = album.images[indexPath.row]
             
             if album.images.count == 1 {
-                cell.config(image: item.image, title: item.title, desc: item.description, top: album.title, bottom: album.description)
+                cell.config(image: item.image, title: item.title, desc: item.description, top: album.title, bottom: album.description, isLast: true)
             } else {
                 if indexPath.row == 0 {
                     //Top
-                    cell.config(image: item.image, title: item.title, desc: item.description, top: album.title, bottom: nil)
+                    cell.config(image: item.image, title: item.title, desc: item.description, top: album.title, bottom: nil, isLast: false)
                 }else if indexPath.row == album.images.count - 1 {
                     //Bottom
-                    cell.config(image: item.image, title: item.title, desc: item.description, top: nil, bottom: album.description)
+                    cell.config(image: item.image, title: item.title, desc: item.description, top: nil, bottom: album.description, isLast: true)
                 } else {
-                    cell.config(image: item.image, title: item.title, desc: item.description, top: nil, bottom: nil)
+                    cell.config(image: item.image, title: item.title, desc: item.description, top: nil, bottom: nil, isLast: false)
                 }
             }
         } else {
-            cell.config(image: image.image, title: nil, desc: nil, top: image.title, bottom: image.description)
+            cell.config(image: image.image, title: nil, desc: nil, top: image.title, bottom: image.description, isLast: true)
         }
         return cell
     }
@@ -119,6 +124,7 @@ class RedoDetailTableView: UITableViewController {
         guard let detailCell = cell as? DetailCell else{
             return
         }
+        tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         if !heights.isEmpty {
             if !isCached {
                 calculateHeights(cell: detailCell, isAlbum: itemGot.isAlbum)
@@ -152,47 +158,52 @@ class RedoDetailTableView: UITableViewController {
     }
     private func calculateHeights(cell detailCell: DetailCell ,isAlbum: Bool) {
         
-        let horizontalInset: CGFloat = 10 * 2
-        let verticalInset: CGFloat = 10 * 2
+        let labelHInsets: CGFloat = 10 * 2
+        let labelVInsets: CGFloat = 20 * 2
+        let separator = detailCell.separatorHeight
         
-        let frameWidth = detailCell.outerView!.frame.width - horizontalInset
-        var paddingCount = 0
-        let padding: CGFloat = 5
+        let frameWidth = detailCell.outerView!.frame.width
+        let labelFrameWidth = frameWidth - labelHInsets
+        
         if isAlbum {
             for (index,item) in album.images.enumerated() {
 
-                let titleHeight = heightForView(text: item.title ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
-                let descHeight = heightForView(text: item.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
+                var titleHeight = heightForView(text: item.title ?? "", font: .systemFont(ofSize: 17), width: labelFrameWidth)
+                var descHeight = heightForView(text: item.description ?? "", font: .systemFont(ofSize: 17), width: labelFrameWidth)
                 let imageHeight = calculateHeight(item.image.size, frameWidth: frameWidth)
-                heights[index] = titleHeight + descHeight + imageHeight + verticalInset
                 
-                paddingCount = descHeight != 0.0 ? paddingCount + 1 : paddingCount
+                titleHeight = titleHeight != 0 ? titleHeight + labelVInsets : titleHeight
+                descHeight = descHeight != 0 ? descHeight + labelVInsets : descHeight
+                
+                heights[index] = titleHeight + descHeight + imageHeight
 
                 switch index {
                 case 0:
                     
-                    let topTitleHeight = heightForView(text: album.title, font: .systemFont(ofSize: 17), width: frameWidth)
+                    var topTitleHeight = heightForView(text: album.title, font: .systemFont(ofSize: 17), width: labelFrameWidth)
+                    
+                    topTitleHeight += labelVInsets
                     
                     if album.images.count == 1 {
-                        let bottomDescHeight = heightForView(text: album.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
+                        var bottomDescHeight = heightForView(text: album.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
                         
-                        paddingCount += 1
-                        paddingCount = bottomDescHeight != 0.0 ? paddingCount + 1 : paddingCount
+                        bottomDescHeight = bottomDescHeight != 0 ? bottomDescHeight + labelVInsets : bottomDescHeight
                         
-                        heights[index] = topTitleHeight + bottomDescHeight + heights[index] + (padding * CGFloat(paddingCount))
-                        print(paddingCount)
+                        heights[index] += topTitleHeight + bottomDescHeight
                     } else {
                         
-                        heights[index] = topTitleHeight + heights[index] + (padding * CGFloat(paddingCount))
+                        heights[index] += topTitleHeight + separator
                     }
                     
                 case album.images.count - 1:
-                    let bottomDescHeight = heightForView(text: album.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
-
-                    heights[index] = bottomDescHeight + heights[index] + (padding * CGFloat(paddingCount))
+                    var bottomDescHeight = heightForView(text: album.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
+                    
+                    bottomDescHeight = bottomDescHeight != 0 ? bottomDescHeight + labelVInsets : bottomDescHeight
+                    
+                    heights[index] += bottomDescHeight
                     
                 default:
-                    heights[index] = heights[index] + (padding * CGFloat(paddingCount))
+                    heights[index] += separator
                 }
             }
         } else {
@@ -200,7 +211,7 @@ class RedoDetailTableView: UITableViewController {
             let imageHeight = calculateHeight(image.image.size, frameWidth: frameWidth)
             let bottomDescHeight = heightForView(text: image.description ?? "", font: .systemFont(ofSize: 17), width: frameWidth)
             
-            let height = topTitleHeight + imageHeight + bottomDescHeight + horizontalInset
+            let height = topTitleHeight + imageHeight + bottomDescHeight
             heights.append(height)
         }
     }
